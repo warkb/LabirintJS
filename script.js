@@ -47,6 +47,15 @@ document.body.onmouseup = function () {
 	pressed = false;
 }
 
+function refrashStatusArray() {
+	// обновляет массив статусов согласно текущему массиву клеток
+	for (var i = 0; i < numberOfCells; i++) {
+		for (var j = 0; j < numberOfCells; j++) {
+			statusArray[i][j] = cellsArray[i][j].className == activeCellClassName;
+		}
+	}
+}
+
 function changeClass(event) {
 	// функция меняет статус ечейки с активной на неактивную
 	if (event.target.className == notActiveCellClassName) {
@@ -57,6 +66,11 @@ function changeClass(event) {
 	}
 }
 
+function distance(a, b) {
+	// получает на вход два двумерных массива с точками, 
+	// возвращает дистанцию между точками
+	return Math.sqrt(Math.pow(a[0] - b[0], 2) + Math.pow(a[1] - b[1], 2));
+}
 $(".activeCell").mousedown(function(e) {
 	changeClass(e);
 	event.preventDefault();
@@ -66,3 +80,11 @@ $(".activeCell").mouseover(function(e) {
 	if (pressed)
 		changeClass(e);
 });
+
+document.body.onkeypress = function(e) {
+	// действие по нажатию enter
+	if (e.key == "Enter") {
+		refrashStatusArray();
+		console.log(statusArray1);
+	}
+};
