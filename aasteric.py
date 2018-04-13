@@ -1,0 +1,356 @@
+import pygame, sys, random
+from pygame.locals import *
+from math import sqrt
+from time import sleep
+
+pathToFile_TO_FIELD = 'field.txt'
+START_MARK = 's'
+FINISH_MARK = 'f'
+BLOCK_MARK = 'b'
+SPACE_MARK = '.'
+PATH_MARK = 'x'
+
+#для графического интерфейса
+SIZE_OF_CELL = 35#величина клетки в пикселах
+MARGIN = 5#зазор между клетками
+HEIGHT = 12
+WIDTH = 12
+NOCELL = (None, None)
+
+WINDOWWIDTH = 900
+WINDOWHEIGHT = 600
+
+START = (0, HEIGHT - 1)
+HERO = START
+FINISH = (WIDTH - 1, 0)
+
+XMARGIN = (WINDOWWIDTH - (MARGIN + SIZE_OF_CELL) * WIDTH + MARGIN) / 2
+YMARGIN = (WINDOWHEIGHT - (MARGIN + SIZE_OF_CELL) * HEIGHT + MARGIN) / 2
+
+CAPTION = 'Поиск пути'
+FULLSELLSIZE = SIZE_OF_CELL + MARGIN
+FULLXSIZE = FULLSELLSIZE * WIDTH
+FULLYSIZE = FULLSELLSIZE * HEIGHT
+
+BGCOLOR = (106, 143, 214)
+BALLCOLOR = (255, 255, 0)
+TARGETCOLOR = (255, 0, 0)
+
+FREECELLCOLOR = (255, 255, 255)
+LOCKCELLCOLOR = (59, 80, 119)
+
+BASEFONTSIZE = 20
+
+WALKSTATE = 'WALK'
+SETSTATE = 'SET'
+
+ALERTFONTSIZE = 40
+
+class Task():
+	"""В этом классе будет создаваться
+	и решаться задача поиска пути"""
+	def __init__(self, pathToFile, initArray = [], start = (), finish = ()):
+		if initArray != [] and start != () and finish != ():
+			self.start = start
+			self.finish = finish
+			self.fieldArr = []
+			for i in range(len(initArray)):
+				lineArr = initArray[i]
+				lineCur = []
+				for j in range(len(lineArr)):
+					lineCur.append((i, j, initArray[j][i]))
+				self.fieldArr.append(lineCur)
+				self.height = len(self.fieldArr)
+				self.width = len(self.fieldArr[0])
+			return
+
+		self.pathToFile = pathToFile#путь к файлу с полем
+		self.path = []#путь от старта к финишу
+		f = open(self.pathToFile)
+		allFieldStr = f.read()
+		f.close()
+		fieldStrings = allFieldStr.split('\n')
+		#создаем переменные, в которых будет указан старт, финиш, ширина и высота поля
+		self.start = None
+		self.finish = None
+		self.height = len(fieldStrings)
+		self.width = len(fieldStrings[0])
+		
+		#сюда можно допилить фичу
+		#которая будет отсекать пустые строки
+		for string in fieldStrings:
+			assert len(string) == self.width, 'Не все строки одинаковой длинны'
+
+		#создаем массив с состояниями клетки поля
+		self.fieldArr = []
+		for i in range(self.height):
+			stringArr = []
+			for j in range(self.width):
+				mark = fieldStrings[i][j]
+				stringArr.append((i, j, mark != BLOCK_MARK))
+				#проверяем и записываем метки старта и финиша
+				if mark == START_MARK:
+					if self.start == None:
+						self.start = (i, j)
+					else:
+						raise BaseException('Несколько меток старта')
+
+				if mark == FINISH_MARK:
+					if self.finish == None:
+						self.finish = (i, j)
+					else:
+						raise BaseException('Несколько меток финиша')
+			self.fieldArr.append(stringArr)
+		
+		assert self.start != None, "Нет метки старта"
+		assert self.finish != None, "Нет метки финиша"
+
+	def __str__(self):
+		string = ''
+		if self.path == []:
+			string += 'Путь не найден(может и не искали)\n'
+		for i in range(self.height):
+			for j in range(self.width):
+				if self.inPath(i, j):
+					string += PATH_MARK
+				elif self.start[0] == i and self.start[1] == j:
+					string += START_MARK
+				elif self.finish[0] == i and self.finish[1] == j:
+					string += FINISH_MARK
+				elif self.fieldArr[i][j][2] == False:
+					string += BLOCK_MARK
+				else:
+					string += ' '
+			string += '\n'
+		return string		
+
+
+	def inPath(self, i, j):
+		for cell in self.path:
+			if i == cell[0] and j == cell[1]:
+				return True
+		return False
+
+	def solve(self):
+		self.path = []
+		self.childs = []
+		"""
+		Пихаем в массив потомки старта
+		Пихаем в путь старт.
+
+		Основной цикл:
+			Смотрим последний элемент массивов потомков
+			Если он пуст, вынимаем этот пустой массив.
+			Вынимаем последний элемент из пути.
+				Проверяем, пуст ли массив потомков?
+					Если да, то бахаем исключение(нет решения)
+				Сбрасываем цикл на начало.
+			Вынимаем первого потомка из последнего элементе массивов потомков.
+			Пихаем его в путь.
+
+			Проверяем, последний пункт пути совпадает с финишем?
+				Если да-валим из функции.(Ура нашли)
+			
+			Если нет, смотрим есть ли у него потомки?
+				Если есть, пихаем в массивы потомков его потомков.
+				Если нет, пихаем пустой массив
+		"""
+
+		left = 3
+		self.childs.append(self.makeChilds(self.start, left))
+		self.path.append(self.start)
+		while True:
+			pygame.display.update()
+			if self.childs[-1] == []:
+				self.childs.pop()
+				self.path.pop()
+				if self.childs == []:
+					return None
+				continue
+			lastCell = self.childs[-1].pop(0)#Последний элемент пути
+			self.path.append(lastCell)
+			#print('lastCell', lastCell)
+			#print('self.finish', self.finish)
+			if lastCell[0] == self.finish [0] and lastCell[1] == self.finish[1]:
+				#Путь найден!
+				self.path.pop(0)
+				return self.path
+			childsLastCell = self.makeChilds(lastCell, left)
+			self.childs.append(childsLastCell)
+
+	def cost(self, cell):
+		"""дистанция до цели"""
+		return sqrt((self.finish[0] - cell[0])**2 + (self.finish[1] - cell[1])**2)
+		return abs(self.finish[0] - cell[0]) + abs(self.finish[1] - cell[1])
+
+	def makeChilds(self, cell, left = 4):
+		thisI = cell[0]
+		thisJ = cell[1]
+		childs = []
+		costs = []
+		#если клетка не занята и её нет в пути, добавляем в потомки
+		for i in [-1, 0, 1]:
+			newI = thisI + i
+			for j in [-1, 0, 1]:
+				newJ = thisJ + j
+				if abs(i) == abs(j):
+					continue
+				if not ((0 <= newI < self.height) and (0 <= newJ < self.width)):
+					continue
+				take = self.fieldArr[newI][newJ][2]
+				for step in self.path:
+					take = take and ((newI != step[0]) or (newJ != step[1]))
+				if take:
+					childs.append((newI, newJ))
+					costs.append(self.cost((newI, newJ)))
+
+		#сортируем по цене
+		pairs = zip(costs, childs)
+		pairs = sorted(pairs)
+		toReturn = [x[1] for x in pairs]
+		return toReturn[:left]
+
+
+class Gui(object):
+	"""Графический интерфейс для задачи"""
+	def __init__(self):
+		global HERO
+		"""запускает игровой цикл"""
+		pygame.init()
+		#self.fpsClock = pygame.time.Clock()
+		self.displaySurf = pygame.display.set_mode((WINDOWWIDTH, WINDOWHEIGHT))
+		pygame.display.set_caption('Поиск пути в лабиринте')
+		self.font = pygame.font.Font('freesansbold.ttf', BASEFONTSIZE)
+		self.alertFont = pygame.font.Font('freesansbold.ttf', ALERTFONTSIZE)
+		self.running = True
+		#состояния
+		self.state = SETSTATE
+		self.lastCell = (None, None)
+		self.dragging = False
+
+
+		self.workArray = [[False] * WIDTH for _ in range(HEIGHT)]
+		self.workArray[START[0]][START[1]] = True
+		self.workArray[FINISH[0]][FINISH[1]] = True
+		#игровой цикл
+		try:
+			while self.running:
+				iSleep = False
+				#делаем начальные вещи
+				self.displaySurf.fill(BGCOLOR)
+				#рисуем доску
+				for i in range(HEIGHT):
+					for j in range(WIDTH):
+						x = XMARGIN + j * FULLSELLSIZE
+						y = YMARGIN + i * FULLSELLSIZE
+						if self.workArray[i][j]:
+							color = FREECELLCOLOR
+						else:
+							color = LOCKCELLCOLOR
+						pygame.draw.rect(self.displaySurf, color, (x, y, SIZE_OF_CELL, SIZE_OF_CELL))
+				#рисуем колобка
+				radius = int((SIZE_OF_CELL - MARGIN) / 2)
+				x = int(XMARGIN + HERO[0] * FULLSELLSIZE) + radius + int(MARGIN / 2)
+				y = int(YMARGIN + HERO[1] * FULLSELLSIZE) + radius + int(MARGIN / 2)
+				pygame.draw.circle(self.displaySurf, BALLCOLOR, (x, y), radius)
+
+				#рисуем цель
+				radius = int((SIZE_OF_CELL) / 2)
+				x = int(XMARGIN + FINISH[0] * FULLSELLSIZE) + radius
+				y = int(YMARGIN + FINISH[1] * FULLSELLSIZE) + radius
+				pygame.draw.circle(self.displaySurf, TARGETCOLOR, (x, y), radius, MARGIN)
+				#рисуем текст
+				textSurf = self.font.render('Левая кнопка мыши - заблокировать/освободить ячейку',\
+				 True, FREECELLCOLOR)
+				textRect = textSurf.get_rect()
+				textRect.topleft = (XMARGIN, MARGIN)
+				self.displaySurf.blit(textSurf, textRect)
+
+				textSurf = self.font.render('Enter - найти путь до цели',\
+				 True, FREECELLCOLOR)
+				textRect = textSurf.get_rect()
+				textRect.topleft = (XMARGIN, MARGIN * 2 + BASEFONTSIZE)
+				self.displaySurf.blit(textSurf, textRect)
+				if self.state == SETSTATE:
+					#обрабатываем события
+					for event in pygame.event.get():
+						if event.type == QUIT:
+							self.running = False
+
+						elif event.type == MOUSEBUTTONUP:
+							self.dragging = False
+							self.lastCell = (None, None)
+
+						elif event.type == MOUSEBUTTONDOWN:
+							self.dragging = True
+
+						elif event.type == KEYUP:
+							if event.key == K_ESCAPE:
+								self.running = False
+							elif event.key == K_RETURN:
+								#тут короче находим путь и переходим в режим прогулки
+								task = Task('', self.workArray, START, FINISH)
+								self.path = task.solve()
+								if self.path == None:
+									alertSurf = self.alertFont.render('НЕТ ПУТИ!', True, TARGETCOLOR)
+									alertRect = alertSurf.get_rect()
+									alertRect.topleft = (int((WINDOWWIDTH - alertRect.width)/ 2), \
+										int((WINDOWHEIGHT - alertRect.height) / 2))
+									self.displaySurf.blit(alertSurf, alertRect)
+									iSleep = True
+								else:
+									self.path.extend([FINISH] * 5)
+									self.state = WALKSTATE
+								
+								
+
+					#делаем стенку
+					pos = pygame.mouse.get_pos()
+					if self.dragging:
+								curCell = self.defCell(pos)
+								change = self.lastCell != curCell
+								self.lastCell = curCell
+								if change:
+									i, j = curCell
+									if i != None:
+										self.workArray[i][j] = not self.workArray[i][j]
+
+				if self.state == WALKSTATE:
+					#двигаемся по маршруту
+					delay = 100
+					pygame.time.delay(delay)
+					cur = self.path.pop(0)
+					HERO = (cur[0], cur[1])
+					if self.path == []:
+						self.state = SETSTATE
+						HERO = START
+				#в самом конце обновляем экран
+				#self.fpsClock.tick(30)
+				pygame.display.update()
+				if iSleep:
+					sleep(2)
+					iSleep = False
+		finally:
+			pygame.quit()
+			#sys.exit()
+
+	def defCell(self, pos):
+		"""функция принимает позицию курсора, возвращает координаты ячейки"""
+		x = pos[0] - XMARGIN
+		y = pos[1] - YMARGIN
+
+		xsize = WIDTH * FULLSELLSIZE
+		ysize = HEIGHT * FULLSELLSIZE
+
+		if x < 0 or x >= xsize or y < 0 or y >= ysize:
+			return NOCELL
+
+		if x % FULLSELLSIZE > SIZE_OF_CELL or y % FULLSELLSIZE > SIZE_OF_CELL:
+			return NOCELL
+
+		return (int(y // FULLSELLSIZE), int(x // FULLSELLSIZE))
+
+if __name__ == '__main__':
+	Gui()
+
+		
