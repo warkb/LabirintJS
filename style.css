@@ -24,3 +24,23 @@ body {
 	text-align: center;
 	line-height: 50px;
 }
+
+#info {
+	text-align: center;
+	font-family: sans-serif;
+	font-size: 14pt;
+}
+
+#goButton {
+/*	position: fixed;
+*/	font-weight: 700;
+	color: white;
+	height: 50px;
+	text-decoration: none;
+	padding: .8em 1em calc(.8em + 3px);
+	/*border-radius: 3px;*/
+	background: rgb(64,199,129);
+	/*box-shadow: 0 -3px rgb(53,167,110) offset;*/
+/*	transition: 0.2s;
+*/
+}

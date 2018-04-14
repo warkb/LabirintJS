@@ -1,6 +1,6 @@
 // take from css
 var margin = 5; // величина зазора между клетками
-var numberOfCells = 10; // количетво клеток
+var numberOfCells = 9; // количетво клеток в линии
 var cellPxSize = 50; // размер клетки в пикселах
 var sizeWithMargin = cellPxSize + margin;
 var firstLeft = (document.body.clientWidth - sizeWithMargin * numberOfCells + 
@@ -13,6 +13,34 @@ var notActiveCellClassName = "notActiveCell";
 
 var statusArray = new Array(numberOfCells);
 var cellsArray = new Array(numberOfCells);
+
+var finding = false; // флаг который означает, что идет поиск
+
+function onEnter(e) {
+	// действие по нажатию enter
+	if ((e.key == "Enter" || e.key == undefined) && !finding) {
+		finding = true;
+		refrashStatusArray();
+		var arr = [1, 2, 3];
+		console.log(toFindPath());
+	}
+
+	finding = false;
+};
+
+// добавляем кнопку поиска пути
+var goButtonText = 'Найти выход';
+var goButtonClassName = 'goButton';
+var goButton = document.createElement("button");
+goButton.id = goButtonClassName;
+goButton.appendChild(document.createTextNode(goButtonText));
+goButton.onclick = onEnter;
+
+// goButton.style.top = firstTop + (numberOfCells - 1) * sizeWithMargin + "px";
+// goButton.style.left = firstLeft + (numberOfCells) * sizeWithMargin + 'px';
+
+document.getElementById('info').appendChild(goButton);
+firstTop += 40;//document.getElementById('info').style.height;
 
 var finalPoint = [0, numberOfCells - 1];
 
@@ -65,60 +93,64 @@ function changeClass(event) {
 	}
 }
 
+
+// далее идут функции, ответственные за поиск пути в лабиринте
+
+var resultPath = [];
+
+function IJnotInResultPath(i, j) {
+	// возвращает true если точка с координатами i,j не принадлежит пути
+	for (var ind in resultPath) {
+		var element = resultPath[ind];
+		if (element[0] == i && element[1] == j) {
+			return false;
+		}
+	}
+	return true;
+}
+
 function posibleMoves(point) {
 	// Возвращает список ходов, доступных из данной точки
 	var moves = [];
 	var i = point[0], j = point[1];
-	if (i + 1 < numberOfCells && statusArray[i + 1][j]) 
+	if (i + 1 < numberOfCells && statusArray[i + 1][j] && IJnotInResultPath(i + 1, j)) 
 		moves.push([i + 1, j]);
-	if (i - 1 >= 0 && numberOfCells && statusArray[i - 1][j])
+	if (i - 1 >= 0 && numberOfCells && statusArray[i - 1][j] && IJnotInResultPath(i - 1, j))
 		moves.push([i - 1, j]);
-	if (j + 1 < numberOfCells && statusArray[i][j + 1])
+	if (j + 1 < numberOfCells && statusArray[i][j + 1] && IJnotInResultPath(i, j + 1))
 		moves.push([i, j + 1]);
-	if (j - 1 >= 0 && statusArray[i][j - 1]) 
+	if (j - 1 >= 0 && statusArray[i][j - 1] && IJnotInResultPath(i, j - 1)) 
 		moves.push([i, j - 1]);
 	return moves.sort(movesSortsFunction);
 }
 
-function printPosMoves(moves) {
-	console.log('posibleMoves');
-	for (var el in moves) {
-		console.log(moves[el]);
-	}
-	console.log('--end moves--');
-}
-
-
 function toFindPath() {
+	resultPath = [];
 	console.log('---toFindPath---');
 	// ищет путь до конечной точки в лабиринте
 	// возвращает пустой массив в случае, если пути нет
+	counter = 0;
 	var startPoint = [numberOfCells - 1, 0]
 	var pathArray = [{
 			point: startPoint,
 			posibleMoves: posibleMoves(startPoint)
 		}];
-	console.log(pathArray);
-	console.log('pathArray');
-	console.log(pathArray[0].point);
-	console.log(printPosMoves(pathArray[0].posibleMoves));
-
+	resultPath.push(startPoint);
 	return recursiveFindPath(pathArray);
 }
 
 function recursiveFindPath(pathArray) {
 	console.log('---recursiveFindPath---');
-	console.log(pathArray);
-	if (false) {
-		console.log('Кончился счетчик');
-		return -1;}
+	counter += 1;
 	// функция рекурсивно ищет путь до нужной точки
 	if (pathArray.length == 0) {
 		// ходов больше нет
 		console.log('ходов больше нет');
+		console.log('Counter: ', counter);
 		return -1;
-
 	}
+
+	if (resultPath.length > 100) {return -1;}
 	var lastCell = pathArray.slice(-1)[0];
 	var lastPosibleMoves = lastCell.posibleMoves;
 	if (lastPosibleMoves.length == 0) {
@@ -126,6 +158,7 @@ function recursiveFindPath(pathArray) {
 		// делаем шаг назад
 		console.log('зашли в тупик');
 		pathArray.pop();
+		resultPath.pop();
 		// $.extend(true, [], pathArray);
 		
 		return recursiveFindPath($.extend(true, [], pathArray));
@@ -133,39 +166,17 @@ function recursiveFindPath(pathArray) {
 	if (distance(lastCell.point, finalPoint) == 0) {
 		// путь найден! возвращаем путь
 		console.log('ура!');
-		var resultPath = [];
-		for (var el in pathArray) {
-			resultPath.push(el.point);
-		}
 		return resultPath;
 	}
-	console.log('Добавляем новую точку');
-	console.log('+++++++++++++++++++++++++++++++++++++++');
-	console.log('Смотрим, что за безобразие тут творится');
-	console.log('Last point ', lastCell.point);
-	console.log('Last moves ');
-	printPosMoves(lastCell.posibleMoves);
-	console.log('+++++++++++++++++++++++++++++++++++++++');
-/*	console.log(pathArray);*/
+
 	var newPoint = pathArray[pathArray.length - 1].posibleMoves.shift();
 	pathArray[pathArray.length - 1].posibleMoves;
 	var newCell = {
 		point: newPoint,
 		posibleMoves: posibleMoves(newPoint)
 	};
-	console.log('+++++++++++++++++++++++++++++++++++++++');
-	console.log('Смотрим, что за безобразие творится при добавлении новой точки');
-	console.log('newPoint ', newCell.point);
-	console.log('New moves ');
-	printPosMoves(newCell.posibleMoves);
-	console.log('+++++++++++++++++++++++++++++++++++++++');	
 	pathArray.push(newCell);
-	console.log('Возвращаем');
-/*	console.log($.extend(true, [], pathArray));*/
-	console.log(pathArray.length);
-	console.log('ИИИИИИИИИИИИИИИИИИИИИ');
-	console.log('ИИИИИИИИИИИИИИИИИИИИИ');
-	console.log('Итерация');
+	resultPath.push(newPoint);
 	return recursiveFindPath($.extend(true, [], pathArray));
 }
 
@@ -196,18 +207,4 @@ $(".activeCell").mouseover(function(e) {
 		changeClass(e);
 });
 
-var finding = false; // флаг который означает, что идет поиск
-
-document.body.onkeypress = function(e) {
-	// действие по нажатию enter
-	if (e.key == "Enter" && !finding) {
-		finding = true;
-		refrashStatusArray();
-		var arr = [1, 2, 3];
-		toFindPath();
-/*		var a = [1, 1];
-		var b = [1, 1, 2];
-		b.pop();
-		console.log(distance(a, b) == 0);*/
-	}
-};
+document.body.onkeypress = onEnter;

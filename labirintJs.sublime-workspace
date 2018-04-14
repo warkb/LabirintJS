@@ -4,12 +4,128 @@
 		"selected_items":
 		[
 			[
-				"cs",
-				"css"
+				"pos",
+				"position"
+			],
+			[
+				"goB",
+				"goButtonClassName"
+			],
+			[
+				"go",
+				"goButton"
+			],
+			[
+				"font",
+				"font-size"
+			],
+			[
+				"fon",
+				"font-family"
+			],
+			[
+				"fons",
+				"font-size"
+			],
+			[
+				"di",
+				"div\tTag"
+			],
+			[
+				"find",
+				"finding"
+			],
+			[
+				"new",
+				"newCell"
+			],
+			[
+				"la",
+				"lastCell"
+			],
+			[
+				"move",
+				"moves"
+			],
+			[
+				"pa",
+				"pathArray"
+			],
+			[
+				"fin",
+				"finding"
+			],
+			[
+				"le",
+				"length"
+			],
+			[
+				"po",
+				"posibleMoves"
+			],
+			[
+				"dis",
+				"distance"
+			],
+			[
+				"las",
+				"lastPosibleMoves"
+			],
+			[
+				"texta",
+				"text-align"
 			],
 			[
 				"st",
-				"style"
+				"statusArray"
+			],
+			[
+				"ch",
+				"characterCode"
+			],
+			[
+				"con",
+				"console.log(\"left"
+			],
+			[
+				"fun",
+				"fun\tFunction"
+			],
+			[
+				"pre",
+				"pressed"
+			],
+			[
+				"cha",
+				"changeClass"
+			],
+			[
+				"ta",
+				"target"
+			],
+			[
+				"fu",
+				"fun\tFunction"
+			],
+			[
+				"not",
+				"notActiveCellClassName"
+			],
+			[
+				"ac",
+				"activeCellClassName"
+			],
+			[
+				"mou",
+				"mousedown\t.mousedown()"
+			],
+			[
+				"fa",
+				"false"
+			],
+			[
+				"cs",
+				"css"
 			],
 			[
 				"size",
@@ -64,24 +180,12 @@
 				"overflow"
 			],
 			[
-				"pos",
-				"pos-a\tposition: absolute;"
-			],
-			[
-				"con",
-				"console"
-			],
-			[
 				"i",
 				"index"
 			],
 			[
 				"mo",
 				"months"
-			],
-			[
-				"fun",
-				"function〔keyword〕"
 			],
 			[
 				"wid",
@@ -164,10 +268,6 @@
 				"countChar〔function〕"
 			],
 			[
-				"di",
-				"div\tTag"
-			],
-			[
 				"ur",
 				"url〔module〕"
 			],
@@ -182,10 +282,6 @@
 			[
 				"no",
 				"now"
-			],
-			[
-				"fu",
-				"future_question〔variable〕"
 			],
 			[
 				"se",
@@ -252,16 +348,8 @@
 				"input\tTag"
 			],
 			[
-				"ac",
-				"action\tAttr"
-			],
-			[
 				"de",
 				"detail"
-			],
-			[
-				"la",
-				"latest_question_list〔variable〕"
 			],
 			[
 				"Re",
@@ -270,10 +358,6 @@
 			[
 				"m",
 				"models〔module〕"
-			],
-			[
-				"pa",
-				"path〔module〕"
 			],
 			[
 				"set",
@@ -346,10 +430,6 @@
 			[
 				"pr",
 				"print〔keyword〕"
-			],
-			[
-				"ch",
-				"checkThatBug〔function〕"
 			],
 			[
 				"In",
@@ -434,86 +514,6 @@
 			[
 				"ite",
 				"itertools〔module〕"
-			],
-			[
-				"std",
-				"stdout〔variable〕"
-			],
-			[
-				"mes",
-				"messageStr〔variable〕"
-			],
-			[
-				"entr",
-				"entry"
-			],
-			[
-				"is",
-				"IsNetmask〔function〕"
-			],
-			[
-				"msg",
-				"msg1〔variable〕"
-			],
-			[
-				"ms",
-				"msg1〔variable〕"
-			],
-			[
-				"l",
-				"level"
-			],
-			[
-				"k",
-				"key.syslog"
-			],
-			[
-				"p",
-				"print"
-			],
-			[
-				"A",
-				"AlwaysTrue"
-			],
-			[
-				"id",
-				"isdigit〔function〕"
-			],
-			[
-				"log",
-				"loggingLevel〔argument〕"
-			],
-			[
-				"EnableLoggi",
-				"EnableLoggingCliCommand〔function〕"
-			],
-			[
-				"cl",
-				"class〔keyword〕"
-			],
-			[
-				"пак",
-				"пакета"
-			],
-			[
-				"ShowR",
-				"ShowRunConfig〔function〕"
-			],
-			[
-				"Sys",
-				"system〔blob〕"
-			],
-			[
-				"et",
-				"eth2〔variable〕"
-			],
-			[
-				"gro",
-				"group"
-			],
-			[
-				"gr",
-				"group"
 			]
 		]
 	},
@@ -523,7 +523,7 @@
 			"file": "index.html",
 			"settings":
 			{
-				"buffer_size": 354,
+				"buffer_size": 449,
 				"encoding": "UTF-8",
 				"line_ending": "Windows"
 			}
@@ -532,7 +532,7 @@
 			"file": "style.css",
 			"settings":
 			{
-				"buffer_size": 342,
+				"buffer_size": 732,
 				"encoding": "UTF-8",
 				"line_ending": "Windows"
 			}
@@ -541,7 +541,7 @@
 			"file": "script.js",
 			"settings":
 			{
-				"buffer_size": 1111,
+				"buffer_size": 6424,
 				"encoding": "UTF-8",
 				"line_ending": "Windows"
 			}
@@ -588,6 +588,14 @@
 				"Git: Commit"
 			],
 			[
+				"ad",
+				"Git: Add..."
+			],
+			[
+				"push",
+				"Git: Push Current Branch"
+			],
+			[
 				"gitAdd",
 				"Git: Add..."
 			],
@@ -600,15 +608,7 @@
 				"Package Control: Install Package"
 			],
 			[
-				"ad",
-				"Git: Add..."
-			],
-			[
 				"pus",
-				"Git: Push"
-			],
-			[
-				"push",
 				"Git: Push"
 			],
 			[
@@ -1016,7 +1016,7 @@
 	],
 	"find":
 	{
-		"height": 41.0
+		"height": 40.0
 	},
 	"find_in_files":
 	{
@@ -1134,6 +1134,14 @@
 		"case_sensitive": false,
 		"find_history":
 		[
+			"movesSortsFunction",
+			"сче",
+			"console",
+			"shift",
+			"length",
+			"console",
+			"distanceToA",
+			");\n",
 			"i",
 			"<div id=\"bgContainer\">\n    <div class=\"card\" align=\"center\">\n        <div class=\"flex-container\">\n            <div class=\"cardcontain\">\n                <img src=\"img/roundAvatar.png\" align=\"middle\" width=\"150\" class=\"round\">\n                <h1>Курбатов Владимир\n                Николаевич</h1>\n                <div class=\"buttons\">\n                    <a href=\"https://vk.com/warkb\" class=\"button\">\n                        <img src=\"img/vkIcon.png\" width=\"70\">\n                    </a>\n                    <a href=\"https://github.com/warkb\" class=\"button\">\n                        <img src=\"img/githubIcon.png\" width=\"70\">\n                    </a>\n                    <a href=\"https://saratov.hh.ru/resume/51196305ff024c56900039ed1f617535415071\" class=\"button\">\n                        <img src=\"img/hhIcon.png\" width=\"70\">\n                    </a>\n                </div>\n            </div>\n        </div>\n    </div>    \n</div>",
 			"order",
@@ -1253,15 +1261,7 @@
 			"SerialBaudrateSettings_12997_2",
 			"CheckAddressAndGatewayIPv6Configure_12614_1",
 			"SUBTEST: ",
-			"CheckOfTrafficBlockedByIPv6CpuAcl_10920_39",
-			"OnLldpMedWithEndpointDevices_7457_3_2",
-			"__CheckPlatform",
-			"ALS-24623-10-03",
-			"        \n",
-			"show port all",
-			"self.__CheckPlatform",
-			"10",
-			"__CheckNetworkSettingsOnSwitch"
+			"CheckOfTrafficBlockedByIPv6CpuAcl_10920_39"
 		],
 		"highlight": true,
 		"in_selection": false,
@@ -1298,7 +1298,7 @@
 	"groups":
 	[
 		{
-			"selected": 3,
+			"selected": 2,
 			"sheets":
 			[
 				{
@@ -1307,15 +1307,15 @@
 					"semi_transient": false,
 					"settings":
 					{
-						"buffer_size": 354,
+						"buffer_size": 449,
 						"regions":
 						{
 						},
 						"selection":
 						[
 							[
-								270,
-								270
+								314,
+								314
 							]
 						],
 						"settings":
@@ -1403,24 +1403,24 @@
 								{
 									"1":
 									[
-										270,
-										271
+										369,
+										375
 									]
 								},
 								"icon":
 								{
 									"1":
 									[
-										"Packages/BracketHighlighter/icons/double_quote.png",
-										"region.greenish"
+										"Packages/BracketHighlighter/icons/tag.png",
+										"region.orangish"
 									]
 								},
 								"open":
 								{
 									"1":
 									[
-										254,
-										255
+										315,
+										321
 									]
 								},
 								"unmatched":
@@ -1501,15 +1501,15 @@
 					"semi_transient": false,
 					"settings":
 					{
-						"buffer_size": 342,
+						"buffer_size": 732,
 						"regions":
 						{
 						},
 						"selection":
 						[
 							[
-								282,
-								282
+								729,
+								729
 							]
 						],
 						"settings":
@@ -1523,8 +1523,8 @@
 								{
 									"1":
 									[
-										340,
-										341
+										731,
+										732
 									]
 								},
 								"icon":
@@ -1539,8 +1539,8 @@
 								{
 									"1":
 									[
-										230,
-										231
+										512,
+										513
 									]
 								},
 								"unmatched":
@@ -1607,10 +1607,11 @@
 							],
 							"color_scheme": "Packages/User/Color Highlighter/themes/Monokai.tmTheme",
 							"git_gutter_is_enabled": true,
-							"syntax": "Packages/CSS/CSS.sublime-syntax"
+							"syntax": "Packages/CSS/CSS.sublime-syntax",
+							"translate_tabs_to_spaces": false
 						},
 						"translation.x": 0.0,
-						"translation.y": 0.0,
+						"translation.y": 186.0,
 						"zoom_level": 1.0
 					},
 					"stack_index": 1,
@@ -1622,15 +1623,15 @@
 					"semi_transient": false,
 					"settings":
 					{
-						"buffer_size": 1111,
+						"buffer_size": 6424,
 						"regions":
 						{
 						},
 						"selection":
 						[
 							[
-								1111,
-								1111
+								6294,
+								6294
 							]
 						],
 						"settings":
@@ -1642,27 +1643,12 @@
 							{
 								"close":
 								{
-									"1":
-									[
-										343,
-										344
-									]
 								},
 								"icon":
 								{
-									"1":
-									[
-										"Packages/BracketHighlighter/icons/round_bracket.png",
-										"region.yellowish"
-									]
 								},
 								"open":
 								{
-									"1":
-									[
-										275,
-										276
-									]
 								},
 								"unmatched":
 								{
@@ -1730,12 +1716,27 @@
 							{
 								"close":
 								{
+									"1":
+									[
+										6307,
+										6308
+									]
 								},
 								"icon":
 								{
+									"1":
+									[
+										"Packages/BracketHighlighter/icons/round_bracket.png",
+										"region.yellowish"
+									]
 								},
 								"open":
 								{
+									"1":
+									[
+										6294,
+										6295
+									]
 								},
 								"unmatched":
 								{
@@ -1800,13 +1801,14 @@
 								"bh_unmatched_content"
 							],
 							"git_gutter_is_enabled": true,
-							"syntax": "Packages/JavaScript/JavaScript.sublime-syntax"
+							"syntax": "Packages/JavaScript/JavaScript.sublime-syntax",
+							"translate_tabs_to_spaces": false
 						},
 						"translation.x": 0.0,
-						"translation.y": 172.0,
+						"translation.y": 3804.0,
 						"zoom_level": 1.0
 					},
-					"stack_index": 2,
+					"stack_index": 0,
 					"type": "text"
 				},
 				{
@@ -1836,8 +1838,8 @@
 								{
 									"1":
 									[
-										770,
-										771
+										885,
+										886
 									]
 								},
 								"icon":
@@ -1852,8 +1854,8 @@
 								{
 									"1":
 									[
-										756,
-										757
+										873,
+										874
 									]
 								},
 								"unmatched":
@@ -2011,10 +2013,10 @@
 							"translate_tabs_to_spaces": false
 						},
 						"translation.x": 0.0,
-						"translation.y": 5174.0,
+						"translation.y": 0.0,
 						"zoom_level": 1.0
 					},
-					"stack_index": 0,
+					"stack_index": 2,
 					"type": "text"
 				}
 			]
@@ -2107,7 +2109,7 @@
 		[
 			[
 				"",
-				"C:\\Users\\WarKB\\Documents\\MyLife\\MyLife.sublime-project"
+				"C:\\Users\\WarKB\\YandexDisk\\RiseOnTheRoadSide\\riseOnTheRoadSide.sublime-project"
 			],
 			[
 				"d",
@@ -2141,7 +2143,7 @@
 	"show_open_files": true,
 	"show_tabs": true,
 	"side_bar_visible": true,
-	"side_bar_width": 203.0,
+	"side_bar_width": 233.0,
 	"status_bar_visible": true,
 	"template_settings":
 	{
