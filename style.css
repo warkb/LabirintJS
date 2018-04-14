@@ -11,7 +11,9 @@ body {
 	background-color: #54f4f4;
 	border: 1px solid red;
 	position: fixed;
-}
+	text-align: center;
+	line-height: 50px;
+	}
 
 .notActiveCell {
 	width: 50px;
@@ -19,4 +21,6 @@ body {
 	background-color: rgb(59, 80, 119);
 	border: 1px solid red;
 	position: fixed;
+	text-align: center;
+	line-height: 50px;
 }
