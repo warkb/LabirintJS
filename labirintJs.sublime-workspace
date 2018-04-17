@@ -4,6 +4,98 @@
 		"selected_items":
 		[
 			[
+				"set",
+				"setTimeout"
+			],
+			[
+				"sl",
+				"sleep"
+			],
+			[
+				"req",
+				"requestAnimationFrame"
+			],
+			[
+				"bo",
+				"body"
+			],
+			[
+				"wa",
+				"waitscreenObject"
+			],
+			[
+				"sto",
+				"stopFlag"
+			],
+			[
+				"do",
+				"document.getElementById('info').style.height"
+			],
+			[
+				"cur",
+				"currentCell"
+			],
+			[
+				"prev",
+				"prevHighlatedCell"
+			],
+			[
+				"prv",
+				"prevHighlatedCell"
+			],
+			[
+				"und",
+				"undefined"
+			],
+			[
+				"hi",
+				"highlitedCellColor"
+			],
+			[
+				"cu",
+				"currentCell"
+			],
+			[
+				"find",
+				"findedPath"
+			],
+			[
+				"finPa",
+				"findedPath"
+			],
+			[
+				"fr",
+				"frameTime"
+			],
+			[
+				"tim",
+				"timer"
+			],
+			[
+				"bu",
+				"buttonClass"
+			],
+			[
+				"bors",
+				"border-style"
+			],
+			[
+				"st",
+				"style\tTag"
+			],
+			[
+				"col",
+				"columns"
+			],
+			[
+				"to",
+				"top"
+			],
+			[
+				"ta",
+				"table-cell"
+			],
+			[
 				"co",
 				"counter"
 			],
@@ -26,10 +118,6 @@
 			[
 				"fir",
 				"firstTop"
-			],
-			[
-				"bo",
-				"box-shadow"
 			],
 			[
 				"pos",
@@ -58,10 +146,6 @@
 			[
 				"di",
 				"div\tTag"
-			],
-			[
-				"find",
-				"finding"
 			],
 			[
 				"new",
@@ -100,10 +184,6 @@
 				"text-align"
 			],
 			[
-				"st",
-				"statusArray"
-			],
-			[
 				"ch",
 				"characterCode"
 			],
@@ -118,10 +198,6 @@
 			[
 				"cha",
 				"changeClass"
-			],
-			[
-				"ta",
-				"target"
 			],
 			[
 				"fu",
@@ -292,10 +368,6 @@
 				"self〔argument〕"
 			],
 			[
-				"tim",
-				"timedelta〔class〕"
-			],
-			[
 				"qu",
 				"question"
 			],
@@ -358,10 +430,6 @@
 			[
 				"m",
 				"models〔module〕"
-			],
-			[
-				"set",
-				"setattr〔function〕"
 			],
 			[
 				"el",
@@ -446,74 +514,6 @@
 			[
 				"ipv6d",
 				"ipv6DynAddr1"
-			],
-			[
-				"ip",
-				"ipv6"
-			],
-			[
-				"ipv6",
-				"ipv6address"
-			],
-			[
-				"networ",
-				"networkTable"
-			],
-			[
-				"Ne",
-				"NetworkTable〔class〕"
-			],
-			[
-				"resu",
-				"result〔variable〕"
-			],
-			[
-				"en",
-				"enumerate〔class〕"
-			],
-			[
-				"ex",
-				"executor〔variable〕"
-			],
-			[
-				"d",
-				"display"
-			],
-			[
-				"sn",
-				"snif2〔module〕"
-			],
-			[
-				"supe",
-				"supervisor〔function〕"
-			],
-			[
-				"asy",
-				"asyncio"
-			],
-			[
-				"stat",
-				"status"
-			],
-			[
-				"su",
-				"supervisor〔function〕"
-			],
-			[
-				"spi",
-				"spinner"
-			],
-			[
-				"spin",
-				"spinner〔variable〕"
-			],
-			[
-				"fl",
-				"flush〔variable〕"
-			],
-			[
-				"ite",
-				"itertools〔module〕"
 			]
 		]
 	},
@@ -523,7 +523,7 @@
 			"file": "index.html",
 			"settings":
 			{
-				"buffer_size": 449,
+				"buffer_size": 990,
 				"encoding": "UTF-8",
 				"line_ending": "Windows"
 			}
@@ -532,16 +532,19 @@
 			"file": "style.css",
 			"settings":
 			{
-				"buffer_size": 774,
+				"buffer_size": 1158,
 				"encoding": "UTF-8",
 				"line_ending": "Windows"
 			}
 		},
 		{
+			"contents": "// take from css\nvar findedPath;\nvar margin = 5; // величина зазора между клетками\nvar numberOfCells = 9; // количетво клеток в линии\nvar cellPxSize = 50; // размер клетки в пикселах\nvar sizeWithMargin = cellPxSize + margin;\nvar firstLeft = (document.body.clientWidth - sizeWithMargin * numberOfCells + \n\tmargin) / 2;\nvar firstTop = (document.body.clientHeight - sizeWithMargin * numberOfCells +\n\tmargin) / 2;\n\nvar waitscreenObject = document.getElementById('waitscreen');\n\nvar baseCellColor = \"#54f4f4\";\n\nvar highlitedCellColor = \"rgb(255,219,77)\";\nvar activeCellClassName = \"activeCell\";\nvar notActiveCellClassName = \"notActiveCell\";\n\nvar statusArray = new Array(numberOfCells);\nvar cellsArray = new Array(numberOfCells);\n\nvar finding = false; // флаг который означает, что идет поиск\nvar stopFlag = false; // флаг который означает, что кнопка стоп была нажата\n\nfunction sleep(ms) {\n\tms += new Date().getTime();\n\twhile (new Date() < ms){}\n}\n\nfunction onStop(e) {\n\t// функция, запускаемая по кнопке \"Надоело ждать\"\n\tstopFlag = true;\n}\n\nfunction onEnter(e) {\n\t// действие по нажатию enter\n\tif ((e.key == \"Enter\" || e.key == undefined) && !finding) {\n\t\tfinding = true;\n\t\twaitscreenObject.setAttribute('style', 'top: 0px;');\n\t\trefrashStatusArray();\n\t\tfindedPath = toFindPath();\n\t\tconsole.log(findedPath);\n\t\twaitscreenObject.style.top = (-document.body.clientWidth) + \"px\";\n\t\tif (findedPath.length > 0) \n\t\t\tplayAnimation(findedPath);\n\t}\n\n\tfinding = false;\n};\n\n// добавляем кнопку поиска пути\ngoButton = document.getElementById(\"goButton\");\ngoButton.onclick = onEnter;\n\n// goButton.style.top = firstTop + (numberOfCells - 1) * sizeWithMargin + \"px\";\n// goButton.style.left = firstLeft + (numberOfCells) * sizeWithMargin + 'px';\n\ndocument.getElementById('info').appendChild(goButton);\nfirstTop += 40;//document.getElementById('info').style.height;\n\nvar finalPoint = [0, numberOfCells - 1];\n\n\nfor (var i = 0; i < numberOfCells; i++) {\n\tstatusArray[i] = new Array(numberOfCells);\n\tcellsArray[i] = new Array(numberOfCells);\n}\n\nfor (var i = 0; i < numberOfCells; i++) {\n\tfor (var j = 0; j < numberOfCells; j++) {\n\t\tvar cell = document.createElement(\"div\");\n\t\tcell.className = activeCellClassName;\n\t\tcell.style.top = (firstTop + i * sizeWithMargin) + \"px\";\n\t\tcell.style.left = (firstLeft + j * sizeWithMargin) + \"px\";\n\t\tcellsArray[i][j] = cell;\n\t\tcell.appendChild(document.createTextNode(i + ', ' + j));\n\t\tdocument.body.appendChild(cell);\n\t}\n}\n\n// добавляем смену класса при перетаскивании мышью с зажатой левой кнопкой\nvar pressed = false;\n\ndocument.body.onmousedown = function () {\n\tpressed = true;\n\tevent.preventDefault();\n}\n\ndocument.body.onmouseup = function () {\n\tpressed = false;\n}\n\nfunction refrashStatusArray() {\n\t// обновляет массив статусов согласно текущему массиву клеток\n\tfor (var i = 0; i < numberOfCells; i++) {\n\t\tfor (var j = 0; j < numberOfCells; j++) {\n\t\t\tstatusArray[i][j] = cellsArray[i][j].className == activeCellClassName;\n\t\t}\n\t}\n}\n\nfunction changeClass(event) {\n\t// функция меняет статус ечейки с активной на неактивную\n\tif (event.target.className == notActiveCellClassName) {\n\t\tevent.target.className = activeCellClassName;\n\t}\n\telse {\n\t\tevent.target.className = notActiveCellClassName;\n\t}\n}\n\n\n// далее идут функции, ответственные за поиск пути в лабиринте\n\nvar resultPath = [];\n\nfunction IJnotInResultPath(i, j) {\n\t// возвращает true если точка с координатами i,j не принадлежит пути\n\tfor (var ind in resultPath) {\n\t\tvar element = resultPath[ind];\n\t\tif (element[0] == i && element[1] == j) {\n\t\t\treturn false;\n\t\t}\n\t}\n\treturn true;\n}\n\nfunction posibleMoves(point) {\n\t// Возвращает список ходов, доступных из данной точки\n\tvar moves = [];\n\tvar i = point[0], j = point[1];\n\tif (i + 1 < numberOfCells && statusArray[i + 1][j] && IJnotInResultPath(i + 1, j)) \n\t\tmoves.push([i + 1, j]);\n\tif (i - 1 >= 0 && numberOfCells && statusArray[i - 1][j] && IJnotInResultPath(i - 1, j))\n\t\tmoves.push([i - 1, j]);\n\tif (j + 1 < numberOfCells && statusArray[i][j + 1] && IJnotInResultPath(i, j + 1))\n\t\tmoves.push([i, j + 1]);\n\tif (j - 1 >= 0 && statusArray[i][j - 1] && IJnotInResultPath(i, j - 1)) \n\t\tmoves.push([i, j - 1]);\n\treturn moves.sort(movesSortsFunction);\n}\n\nfunction toFindPath() {\n\tresultPath = [];\n\tconsole.log('---toFindPath---');\n\t// ищет путь до конечной точки в лабиринте\n\t// возвращает пустой массив в случае, если пути нет\n\tcounter = 0;\n\tvar startPoint = [numberOfCells - 1, 0]\n\tvar pathArray = [{\n\t\t\tpoint: startPoint,\n\t\t\tposibleMoves: posibleMoves(startPoint)\n\t\t}];\n\tresultPath.push(startPoint);\n\treturn recursiveFindPath(pathArray);\n}\n\nfunction recursiveFindPath(pathArray) {\n\tconsole.log('---recursiveFindPath---');\n\tcounter += 1;\n\t// функция рекурсивно ищет путь до нужной точки\n\tif (pathArray.length == 0) {\n\t\t// ходов больше нет\n\t\tconsole.log('ходов больше нет');\n\t\tconsole.log('Counter: ', counter);\n\t\treturn -1;\n\t}\n\n\tif (resultPath.length > 100) {return -1;}\n\tvar lastCell = pathArray.slice(-1)[0];\n\tvar lastPosibleMoves = lastCell.posibleMoves;\n\tif (lastPosibleMoves.length == 0) {\n\t\t// зашли в тупик\n\t\t// делаем шаг назад\n\t\tconsole.log('зашли в тупик');\n\t\tpathArray.pop();\n\t\tresultPath.pop();\n\t\t// $.extend(true, [], pathArray);\n\t\t\n\t\treturn recursiveFindPath($.extend(true, [], pathArray));\n\t}\n\tif (distance(lastCell.point, finalPoint) == 0) {\n\t\t// путь найден! возвращаем путь\n\t\tconsole.log('ура!');\n\t\treturn resultPath;\n\t}\n\n\tvar newPoint = pathArray[pathArray.length - 1].posibleMoves.shift();\n\tpathArray[pathArray.length - 1].posibleMoves;\n\tvar newCell = {\n\t\tpoint: newPoint,\n\t\tposibleMoves: posibleMoves(newPoint)\n\t};\n\tpathArray.push(newCell);\n\tresultPath.push(newPoint);\n\treturn recursiveFindPath($.extend(true, [], pathArray));\n}\n\nfunction movesSortsFunction(a, b) {\n\t// вспомогательная функция для сортировки массива\n\tvar distanceToA = distance(a, finalPoint);\n\tvar distanceToB = distance(b, finalPoint);\n\tif (distanceToA == distanceToB) \n\t\treturn 0;\n\tif (distanceToA < distanceToB) \n\t\treturn 0-1;\n\telse\n\t\treturn 1;\n}\n\nfunction distance(a, b) {\n\t// получает на вход два двумерных массива с точками, \n\t// возвращает дистанцию между точками\n\treturn Math.sqrt(Math.pow(a[0] - b[0], 2) + Math.pow(a[1] - b[1], 2));\n}\n\nfunction playAnimation(path) {\n\t// отображает полученный путь в виде анимации\n\tvar start = Date.now();\n\tvar frameTime = 300; // время, за которое анимация сдвинется на один кадр\n\tvar fullTime = frameTime * (path.length + 1);\n\tvar prevHighlatedCell = undefined;\n\tvar timer = setInterval(function () {\n\t\tvar timePassed = Date.now() - start;\n\t\tvar currentFrame = Math.ceil(timePassed / frameTime);\n\t\tif (prevHighlatedCell) {\n\t\t\tprevHighlatedCell.style.backgroundColor = \"\";\n\t\t}\n\t\tif (currentFrame >= path.length) {\n\t\t\tclearInterval(timer);\n\t\t\treturn;\n\t\t}\n\t\tvar currentCellCoord = path[currentFrame];\n\t\tvar currentCell = cellsArray[currentCellCoord[0]][currentCellCoord[1]];\n\t\tcurrentCell.style.backgroundColor = highlitedCellColor;\n\t\tprevHighlatedCell = currentCell;\n\t});\n}\n\n$(\".activeCell\").mousedown(function(e) {\n\tchangeClass(e);\n\tevent.preventDefault();\n});\n\n$(\".activeCell\").mouseover(function(e) {\n\tif (pressed)\n\t\tchangeClass(e);\n});\n\ndocument.body.onkeypress = onEnter;",
 			"file": "script.js",
+			"file_size": 8287,
+			"file_write_time": 131684226979670657,
 			"settings":
 			{
-				"buffer_size": 5920,
+				"buffer_size": 7119,
 				"encoding": "UTF-8",
 				"line_ending": "Windows"
 			}
@@ -550,7 +553,7 @@
 			"file": "tmp.html",
 			"settings":
 			{
-				"buffer_size": 0,
+				"buffer_size": 481,
 				"encoding": "UTF-8",
 				"line_ending": "Windows"
 			}
@@ -869,7 +872,7 @@
 				"Package Control: Remove Package"
 			]
 		],
-		"width": 476.0
+		"width": 540.0
 	},
 	"console":
 	{
@@ -1143,6 +1146,7 @@
 		"case_sensitive": false,
 		"find_history":
 		[
+			"goButtonClassName",
 			"console",
 			"path",
 			"Path",
@@ -1269,8 +1273,7 @@
 			"traffic-shape",
 			"CheckUntrust_13331_1",
 			"QosTrustTable",
-			"classofservice dot1p-mapping",
-			"GetClassofserviceMapping"
+			"classofservice dot1p-mapping"
 		],
 		"highlight": true,
 		"in_selection": false,
@@ -1307,7 +1310,7 @@
 	"groups":
 	[
 		{
-			"selected": 0,
+			"selected": 2,
 			"sheets":
 			[
 				{
@@ -1316,15 +1319,15 @@
 					"semi_transient": false,
 					"settings":
 					{
-						"buffer_size": 449,
+						"buffer_size": 990,
 						"regions":
 						{
 						},
 						"selection":
 						[
 							[
-								314,
-								314
+								698,
+								698
 							]
 						],
 						"settings":
@@ -1337,12 +1340,27 @@
 							{
 								"close":
 								{
+									"1":
+									[
+										706,
+										707
+									]
 								},
 								"icon":
 								{
+									"1":
+									[
+										"Packages/BracketHighlighter/icons/tag.png",
+										"region.orangish"
+									]
 								},
 								"open":
 								{
+									"1":
+									[
+										596,
+										597
+									]
 								},
 								"unmatched":
 								{
@@ -1412,8 +1430,8 @@
 								{
 									"1":
 									[
-										369,
-										375
+										850,
+										853
 									]
 								},
 								"icon":
@@ -1428,8 +1446,8 @@
 								{
 									"1":
 									[
-										315,
-										321
+										664,
+										667
 									]
 								},
 								"unmatched":
@@ -1498,10 +1516,10 @@
 							"syntax": "Packages/HTML/HTML.sublime-syntax"
 						},
 						"translation.x": 0.0,
-						"translation.y": 0.0,
+						"translation.y": 185.0,
 						"zoom_level": 1.0
 					},
-					"stack_index": 0,
+					"stack_index": 2,
 					"type": "text"
 				},
 				{
@@ -1510,15 +1528,15 @@
 					"semi_transient": false,
 					"settings":
 					{
-						"buffer_size": 774,
+						"buffer_size": 1158,
 						"regions":
 						{
 						},
 						"selection":
 						[
 							[
-								283,
-								283
+								8,
+								8
 							]
 						],
 						"settings":
@@ -1532,43 +1550,13 @@
 								{
 									"1":
 									[
-										420,
-										421
-									],
-									"2":
-									[
-										420,
-										421
-									],
-									"3":
-									[
-										420,
-										421
-									],
-									"4":
-									[
-										769,
-										770
+										1080,
+										1081
 									]
 								},
 								"icon":
 								{
 									"1":
-									[
-										"Packages/BracketHighlighter/icons/curly_bracket.png",
-										"region.purplish"
-									],
-									"2":
-									[
-										"Packages/BracketHighlighter/icons/curly_bracket.png",
-										"region.purplish"
-									],
-									"3":
-									[
-										"Packages/BracketHighlighter/icons/curly_bracket.png",
-										"region.purplish"
-									],
-									"4":
 									[
 										"Packages/BracketHighlighter/icons/curly_bracket.png",
 										"region.purplish"
@@ -1578,23 +1566,8 @@
 								{
 									"1":
 									[
-										272,
-										273
-									],
-									"2":
-									[
-										272,
-										273
-									],
-									"3":
-									[
-										272,
-										273
-									],
-									"4":
-									[
-										509,
-										510
+										823,
+										824
 									]
 								},
 								"unmatched":
@@ -1665,8 +1638,8 @@
 								{
 									"1":
 									[
-										423,
-										424
+										96,
+										97
 									]
 								},
 								"icon":
@@ -1681,8 +1654,8 @@
 								{
 									"1":
 									[
-										272,
-										273
+										5,
+										6
 									]
 								},
 								"unmatched":
@@ -1753,7 +1726,7 @@
 							"translate_tabs_to_spaces": false
 						},
 						"translation.x": 0.0,
-						"translation.y": 323.0,
+						"translation.y": 0.0,
 						"zoom_level": 1.0
 					},
 					"stack_index": 1,
@@ -1765,15 +1738,15 @@
 					"semi_transient": false,
 					"settings":
 					{
-						"buffer_size": 5920,
+						"buffer_size": 7119,
 						"regions":
 						{
 						},
 						"selection":
 						[
 							[
-								3912,
-								3912
+								1223,
+								1370
 							]
 						],
 						"settings":
@@ -1787,8 +1760,8 @@
 								{
 									"1":
 									[
-										3936,
-										3937
+										1480,
+										1481
 									]
 								},
 								"icon":
@@ -1803,8 +1776,8 @@
 								{
 									"1":
 									[
-										3819,
-										3820
+										1148,
+										1149
 									]
 								},
 								"unmatched":
@@ -1875,8 +1848,8 @@
 								{
 									"1":
 									[
-										4124,
-										4125
+										1432,
+										1433
 									]
 								},
 								"icon":
@@ -1891,8 +1864,8 @@
 								{
 									"1":
 									[
-										3760,
-										3761
+										1148,
+										1149
 									]
 								},
 								"unmatched":
@@ -1962,10 +1935,10 @@
 							"translate_tabs_to_spaces": false
 						},
 						"translation.x": 0.0,
-						"translation.y": 0.0,
+						"translation.y": 359.0,
 						"zoom_level": 1.0
 					},
-					"stack_index": 2,
+					"stack_index": 0,
 					"type": "text"
 				},
 				{
@@ -1974,31 +1947,135 @@
 					"semi_transient": false,
 					"settings":
 					{
-						"buffer_size": 0,
+						"buffer_size": 481,
 						"regions":
 						{
 						},
 						"selection":
 						[
 							[
-								0,
-								0
+								281,
+								303
 							]
 						],
 						"settings":
 						{
+							"auto_complete": false,
 							"bracket_highlighter.busy": false,
 							"bracket_highlighter.clone": -1,
+							"bracket_highlighter.clone_locations":
+							{
+								"close":
+								{
+									"1":
+									[
+										307,
+										308
+									]
+								},
+								"icon":
+								{
+									"1":
+									[
+										"Packages/BracketHighlighter/icons/curly_bracket.png",
+										"region.purplish"
+									]
+								},
+								"open":
+								{
+									"1":
+									[
+										107,
+										108
+									]
+								},
+								"unmatched":
+								{
+								}
+							},
+							"bracket_highlighter.clone_regions":
+							[
+								"bh_default",
+								"bh_default_center",
+								"bh_default_open",
+								"bh_default_close",
+								"bh_default_content",
+								"bh_curly",
+								"bh_curly_center",
+								"bh_curly_open",
+								"bh_curly_close",
+								"bh_curly_content",
+								"bh_angle",
+								"bh_angle_center",
+								"bh_angle_open",
+								"bh_angle_close",
+								"bh_angle_content",
+								"bh_single_quote",
+								"bh_single_quote_center",
+								"bh_single_quote_open",
+								"bh_single_quote_close",
+								"bh_single_quote_content",
+								"bh_regex",
+								"bh_regex_center",
+								"bh_regex_open",
+								"bh_regex_close",
+								"bh_regex_content",
+								"bh_round",
+								"bh_round_center",
+								"bh_round_open",
+								"bh_round_close",
+								"bh_round_content",
+								"bh_tag",
+								"bh_tag_center",
+								"bh_tag_open",
+								"bh_tag_close",
+								"bh_tag_content",
+								"bh_double_quote",
+								"bh_double_quote_center",
+								"bh_double_quote_open",
+								"bh_double_quote_close",
+								"bh_double_quote_content",
+								"bh_square",
+								"bh_square_center",
+								"bh_square_open",
+								"bh_square_close",
+								"bh_square_content",
+								"bh_c_define",
+								"bh_c_define_center",
+								"bh_c_define_open",
+								"bh_c_define_close",
+								"bh_c_define_content",
+								"bh_unmatched",
+								"bh_unmatched_center",
+								"bh_unmatched_open",
+								"bh_unmatched_close",
+								"bh_unmatched_content"
+							],
 							"bracket_highlighter.locations":
 							{
 								"close":
 								{
+									"1":
+									[
+										328,
+										329
+									]
 								},
 								"icon":
 								{
+									"1":
+									[
+										"Packages/BracketHighlighter/icons/curly_bracket.png",
+										"region.purplish"
+									]
 								},
 								"open":
 								{
+									"1":
+									[
+										107,
+										108
+									]
 								},
 								"unmatched":
 								{
@@ -2069,7 +2146,7 @@
 						"translation.y": 0.0,
 						"zoom_level": 1.0
 					},
-					"stack_index": 3,
+					"stack_index": 4,
 					"type": "text"
 				},
 				{
@@ -2277,7 +2354,7 @@
 						"translation.y": 0.0,
 						"zoom_level": 1.0
 					},
-					"stack_index": 4,
+					"stack_index": 3,
 					"type": "text"
 				}
 			]

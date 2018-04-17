@@ -1,4 +1,5 @@
 // take from css
+var findedPath;
 var margin = 5; // величина зазора между клетками
 var numberOfCells = 9; // количетво клеток в линии
 var cellPxSize = 50; // размер клетки в пикселах
@@ -8,6 +9,7 @@ var firstLeft = (document.body.clientWidth - sizeWithMargin * numberOfCells +
 var firstTop = (document.body.clientHeight - sizeWithMargin * numberOfCells +
 	margin) / 2;
 
+var waitscreenObject = document.getElementById('waitscreen');
 
 var baseCellColor = "#54f4f4";
 
@@ -19,15 +21,31 @@ var statusArray = new Array(numberOfCells);
 var cellsArray = new Array(numberOfCells);
 
 var finding = false; // флаг который означает, что идет поиск
+var stopFlag = false; // флаг который означает, что кнопка стоп была нажата
+
+function sleep(ms) {
+	ms += new Date().getTime();
+	while (new Date() < ms){}
+}
+
+function onStop() {
+	// функция, запускаемая по кнопке "Надоело ждать"
+	stopFlag = true;
+}
 
 function onEnter(e) {
 	// действие по нажатию enter
 	if ((e.key == "Enter" || e.key == undefined) && !finding) {
 		finding = true;
-		refrashStatusArray();
-		var arr = [1, 2, 3];
-		var findedPath = toFindPath();
-		console.log(findedPath);
+		waitscreenObject.setAttribute('style', 'top: 0px;');
+
+		function doTheLongWork() {
+			refrashStatusArray();
+			findedPath = toFindPath();
+			console.log(findedPath);
+			waitscreenObject.style.top = (-document.body.clientWidth) + "px";
+		}
+		setTimeout(doTheLongWork, 0);
 		if (findedPath.length > 0) 
 			playAnimation(findedPath);
 	}
@@ -146,8 +164,9 @@ function recursiveFindPath(pathArray) {
 	console.log('---recursiveFindPath---');
 	counter += 1;
 	// функция рекурсивно ищет путь до нужной точки
-	if (pathArray.length == 0) {
+	if (pathArray.length == 0 || stopFlag == true) {
 		// ходов больше нет
+		stopFlag = false;
 		console.log('ходов больше нет');
 		console.log('Counter: ', counter);
 		return -1;
