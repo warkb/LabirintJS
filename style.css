@@ -31,22 +31,28 @@ body {
 	font-size: 14pt;
 }
 
-#goButton {
-/*	position: fixed;
-*/	font-weight: 700;
+.buttonClass {
+	font-weight: 700;
 	color: white;
 	height: 50px;
 	text-decoration: none;
 	padding: .8em 1em calc(.8em + 3px);
-	/*border-radius: 3px;*/
+	border-radius: 5px;
 	background: rgb(64,199,129);
-	/*box-shadow: 0 -3px rgb(53,167,110) offset;*/
-/*	transition: 0.2s;
-*/
+	border-style: none;
+	position: relative;
+}
+
+.buttonClass:active {
+	top: 3px;
+}
+
+.buttonClass:hover {
+	border: 2px solid #FF7404;
 }
 
 #waitscreen {
-	background-color: rgba(255, 255, 255, 0.5);
+	background-color: rgba(202, 200, 200, 0.8);
 	width: 100vw;
 	height: 100vh;
 	overflow: hidden;
@@ -54,5 +60,16 @@ body {
 	top: 0;
 	left: 0;
 	z-index: 200;
-	/* visibility: hidden; */
+	 visibility: hidden; 
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	columns: 15em 1;
+}
+
+#waitContainer {
+	top: 60vh;
+	/* border: 1px solid red; */
+	height: 20em; 
+	text-align: center;
 }

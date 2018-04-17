@@ -8,6 +8,10 @@ var firstLeft = (document.body.clientWidth - sizeWithMargin * numberOfCells +
 var firstTop = (document.body.clientHeight - sizeWithMargin * numberOfCells +
 	margin) / 2;
 
+
+var baseCellColor = "#54f4f4";
+
+var highlitedCellColor = "rgb(255,219,77)";
 var activeCellClassName = "activeCell";
 var notActiveCellClassName = "notActiveCell";
 
@@ -22,18 +26,17 @@ function onEnter(e) {
 		finding = true;
 		refrashStatusArray();
 		var arr = [1, 2, 3];
-		console.log(toFindPath());
+		var findedPath = toFindPath();
+		console.log(findedPath);
+		if (findedPath.length > 0) 
+			playAnimation(findedPath);
 	}
 
 	finding = false;
 };
 
 // добавляем кнопку поиска пути
-var goButtonText = 'Найти выход';
-var goButtonClassName = 'goButton';
-var goButton = document.createElement("button");
-goButton.id = goButtonClassName;
-goButton.appendChild(document.createTextNode(goButtonText));
+goButton = document.getElementById("goButton");
 goButton.onclick = onEnter;
 
 // goButton.style.top = firstTop + (numberOfCells - 1) * sizeWithMargin + "px";
@@ -197,6 +200,30 @@ function distance(a, b) {
 	// возвращает дистанцию между точками
 	return Math.sqrt(Math.pow(a[0] - b[0], 2) + Math.pow(a[1] - b[1], 2));
 }
+
+function playAnimation(path) {
+	// отображает полученный путь в виде анимации
+	var start = Date.now();
+	var frameTime = 300; // время, за которое анимация сдвинется на один кадр
+	var fullTime = frameTime * (path.length + 1);
+	var prevHighlatedCell = undefined;
+	var timer = setInterval(function () {
+		var timePassed = Date.now() - start;
+		var currentFrame = Math.ceil(timePassed / frameTime);
+		if (prevHighlatedCell) {
+			prevHighlatedCell.style.backgroundColor = "";
+		}
+		if (currentFrame >= path.length) {
+			clearInterval(timer);
+			return;
+		}
+		var currentCellCoord = path[currentFrame];
+		var currentCell = cellsArray[currentCellCoord[0]][currentCellCoord[1]];
+		currentCell.style.backgroundColor = highlitedCellColor;
+		prevHighlatedCell = currentCell;
+	});
+}
+
 $(".activeCell").mousedown(function(e) {
 	changeClass(e);
 	event.preventDefault();
