@@ -4,6 +4,7 @@ var margin = 5; // величина зазора между клетками
 var numberOfCells = 9; // количетво клеток в линии
 var cellPxSize = 50; // размер клетки в пикселах
 var sizeWithMargin = cellPxSize + margin;
+var maxCounter = 15000; // максимальное количество итераций поиска
 var firstLeft = (document.body.clientWidth - sizeWithMargin * numberOfCells + 
 	margin) / 2;
 var firstTop = (document.body.clientHeight - sizeWithMargin * numberOfCells +
@@ -45,9 +46,9 @@ function onEnter(e) {
 			console.log(findedPath);
 			waitscreenObject.style.top = (-document.body.clientWidth) + "px";
 		}
+		
 		setTimeout(doTheLongWork, 0);
-		if (findedPath.length > 0) 
-			playAnimation(findedPath);
+		setTimeout('if (findedPath.length > 0) playAnimation(findedPath);', 0);
 	}
 
 	finding = false;
@@ -147,7 +148,6 @@ function posibleMoves(point) {
 
 function toFindPath() {
 	resultPath = [];
-	console.log('---toFindPath---');
 	// ищет путь до конечной точки в лабиринте
 	// возвращает пустой массив в случае, если пути нет
 	counter = 0;
@@ -161,14 +161,16 @@ function toFindPath() {
 }
 
 function recursiveFindPath(pathArray) {
-	console.log('---recursiveFindPath---');
 	counter += 1;
 	// функция рекурсивно ищет путь до нужной точки
 	if (pathArray.length == 0 || stopFlag == true) {
 		// ходов больше нет
 		stopFlag = false;
-		console.log('ходов больше нет');
-		console.log('Counter: ', counter);
+		alert('Пути нет!');
+		return -1;
+	}
+	if (counter > maxCounter) {
+		alert('Слишком долго ищется путь');
 		return -1;
 	}
 
@@ -178,7 +180,6 @@ function recursiveFindPath(pathArray) {
 	if (lastPosibleMoves.length == 0) {
 		// зашли в тупик
 		// делаем шаг назад
-		console.log('зашли в тупик');
 		pathArray.pop();
 		resultPath.pop();
 		// $.extend(true, [], pathArray);
