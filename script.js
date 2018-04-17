@@ -46,8 +46,13 @@ function onEnter(e) {
 			console.log(findedPath);
 			waitscreenObject.style.top = (-document.body.clientWidth) + "px";
 		}
-		
-		setTimeout(doTheLongWork, 0);
+		try {
+			setTimeout(doTheLongWork, 0);
+		}
+		catch(e) {
+			findedPath = [];
+			alert('Ошибка: ' + e);
+		}
 		setTimeout('if (findedPath.length > 0) playAnimation(findedPath);', 0);
 	}
 
@@ -175,7 +180,13 @@ function recursiveFindPath(pathArray) {
 	}
 
 	if (resultPath.length > 100) {return -1;}
-	var lastCell = pathArray.slice(-1)[0];
+	try {
+		var lastCell = pathArray.slice(-1)[0];
+	}
+	catch(e) {
+		alert('Превышен максимальный размер стека');
+		return -1;
+	}
 	var lastPosibleMoves = lastCell.posibleMoves;
 	if (lastPosibleMoves.length == 0) {
 		// зашли в тупик
@@ -184,7 +195,7 @@ function recursiveFindPath(pathArray) {
 		resultPath.pop();
 		// $.extend(true, [], pathArray);
 		
-		return recursiveFindPath($.extend(true, [], pathArray));
+		return recursiveFindPath(pathArray);
 	}
 	if (distance(lastCell.point, finalPoint) == 0) {
 		// путь найден! возвращаем путь
@@ -200,7 +211,7 @@ function recursiveFindPath(pathArray) {
 	};
 	pathArray.push(newCell);
 	resultPath.push(newPoint);
-	return recursiveFindPath($.extend(true, [], pathArray));
+	return recursiveFindPath(pathArray);
 }
 
 function movesSortsFunction(a, b) {
