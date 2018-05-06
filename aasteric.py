@@ -6,12 +6,6 @@ from math import sqrt
 from time import sleep
 from copy import deepcopy
 
-"""
-ТУУУУУУУУУУУДУУУУУУУУУУУУУУУУ
-*Зарефакторить код, разделить большие функции на маленькие
-
-"""
-
 
 pathToFile_TO_FIELD = 'field.txt'
 START_MARK = 's'
@@ -33,7 +27,7 @@ WINDOWHEIGHT = 600
 NUMARRAY = []
 
 START = (0, HEIGHT - 1)
-HERO = START
+HERO = START  # координаты желтого кружка
 FINISH = (WIDTH - 1, 0)
 
 XMARGIN = (WINDOWWIDTH - (MARGIN + SIZE_OF_CELL) * WIDTH + MARGIN) / 2
@@ -63,7 +57,7 @@ class Task():
     """В этом классе будет создаваться
     и решаться задача поиска пути"""
 
-    def __init__(self, pathToFile, initArray=[], start=(), finish=()):
+    def __init__(self, pathToFile, initArray, start, finish):
         self.start = start
         self.finish = finish
         self.fieldArr = []
@@ -125,9 +119,11 @@ class Task():
         numArray = [[-1 if self.fieldArr[i][j][2] else None
                      for j in range(self.width)]
                     for i in range(self.height)]
-        lastMarkedLists = [[self.start]]  # список с ранее пронумерованными ячейками
+        # список с ранее пронумерованными ячейками
+        lastMarkedLists = [[self.start]]
         i, j = self.start
         numArray[i][j] = 0
+
         def getNeighbors(cell, noMarkCheck=False):
             """возвращает все еще не отмеченные и свободные соседние клетки"""
             output = []
@@ -140,29 +136,11 @@ class Task():
                         continue
                     if abs(di) == abs(dj):
                         continue
-                    # print('^^^^^^^^^^^^^^')
-                    # print('di', di)
-                    # print('dj', dj)
-                    # print('^^^^^^^^^^^^^^')
-                    # print('if j')
-                    # print('nj + dj', nj + dj)
-                    # print(self.width)
-                    # print()
-                    # print('itog')
-                    # print('ni', ni)
-                    # print('nj', nj)
                     if numArray[ni + di][nj + dj] == -1 or noMarkCheck:
                         output.append((ni + di, nj + dj))
             return output
-
-        # print('====================================')
-        # print((0, 11), getNeighbors((0, 11), True))
-        # print((11, 0), getNeighbors((11, 0), True))
-        # print((11, 11), getNeighbors((11, 11), True))
-        # print((0, 0), getNeighbors((0, 0), True))        
-        # print('====================================')
-        for k in range(max(self.width, self.height) * 
-            max(self.width, self.height)):
+        for k in range(max(self.width, self.height) *
+                       max(self.width, self.height)):
             listToMark = []
             for cell in lastMarkedLists[-1]:
                 for neighCell in getNeighbors(cell):
@@ -176,23 +154,15 @@ class Task():
             for cell in listToMark:
                 numArray[cell[0]][cell[1]] = k + 1
             if self.finish in listToMark:
-                print('путь нашли')
-
                 # путь нашли!
                 break
             lastMarkedLists.append(listToMark)
 
         else:
-            print('Цикл идет дольше, чем должен')
-            return
-        
+            raise BaseException('Слишком много итераций цикла')
         # собираем путь
         path = [self.finish]
         for line in reversed(lastMarkedLists):
-            # print()
-            # print('pathPrev', path[0])
-            # print('line', line)
-            # print('neighCell', getNeighbors(path[0], True))
             for cell in line:
                 if cell in getNeighbors(path[0], True):
                     path.insert(0, cell)
@@ -200,14 +170,13 @@ class Task():
         NUMARRAY = lastMarkedLists
         return path
 
-
     def solveByAAsteric(self):
-        """поиск пути с помощью алгоритми А*"""
+        """поиск пути с помощью алгоритма А*"""
         self.path = []
         self.childs = []
         """
-        Пихаем в массив потомки старта
-        Пихаем в путь старт.
+        Помещаем в массив потомки старта
+        Помещаем в путь старт.
 
         Основной цикл:
             Смотрим последний элемент массивов потомков
@@ -217,10 +186,10 @@ class Task():
                     Если да, то возвращаем None(нет решения)
                 Сбрасываем цикл на начало.
             Вынимаем первого потомка из последнего элементе массивов потомков.
-            Пихаем его в путь.
+            Помещаем его в путь.
 
             Проверяем, последний пункт пути совпадает с финишем?
-                Если да-валим из функции.(Ура нашли)
+                Если да - выходим из функции.(нашли)
             
             Если нет, смотрим есть ли у него потомки?
                 Если есть, пихаем в массивы потомков его потомков.
@@ -244,7 +213,6 @@ class Task():
             if lastCell[0] == self.finish[0] and lastCell[1] == self.finish[1]:
                 # Путь найден!
                 self.path.pop(0)
-                print(self.path)
                 return self.path
             childsLastCell = self.makeChilds(lastCell, left)
             self.childs.append(childsLastCell)
@@ -255,6 +223,11 @@ class Task():
         return abs(self.finish[0] - cell[0]) + abs(self.finish[1] - cell[1])
 
     def makeChilds(self, cell, left=4):
+        """
+        создает масив ячеек из left элементов, 
+        находящихся по соседству с данной, 
+        отсортированных по стоимости
+        """
         thisI = cell[0]
         thisJ = cell[1]
         childs = []
@@ -306,118 +279,105 @@ class Gui(object):
         self.workArray[FINISH[0]][FINISH[1]] = True
         # игровой цикл
         try:
-            while self.running:
-                iSleep = False
-                # делаем начальные вещи
-                self.displaySurf.fill(BGCOLOR)
-                # рисуем доску
-                for i in range(HEIGHT):
-                    for j in range(WIDTH):
-                        x = XMARGIN + j * FULLSELLSIZE
-                        y = YMARGIN + i * FULLSELLSIZE
-
-                        # дебажные рисунки
-                        textSurf = self.minifont.render('(%s, %s)' % (j, i),
-                                                    True, (0, 0, 0))
-                        textRect = textSurf.get_rect()
-                        textRect.topleft = (x, y)
-                        #------------------------------------
-                        if self.workArray[i][j]:
-                            color = FREECELLCOLOR
-                        else:
-                            color = LOCKCELLCOLOR
-                        pygame.draw.rect(self.displaySurf, color,
-                                         (x, y, SIZE_OF_CELL, SIZE_OF_CELL))
-                        self.displaySurf.blit(textSurf, textRect)
-                self.drawMarks()
-                # рисуем колобка
-                radius = int((SIZE_OF_CELL - MARGIN) / 2)
-                x = int(XMARGIN + HERO[0] * FULLSELLSIZE) + \
-                    radius + int(MARGIN / 2)
-                y = int(YMARGIN + HERO[1] * FULLSELLSIZE) + \
-                    radius + int(MARGIN / 2)
-                pygame.draw.circle(self.displaySurf, BALLCOLOR, (x, y), radius)
-
-                # рисуем цель
-                radius = int((SIZE_OF_CELL) / 2)
-                x = int(XMARGIN + FINISH[0] * FULLSELLSIZE) + radius
-                y = int(YMARGIN + FINISH[1] * FULLSELLSIZE) + radius
-                pygame.draw.circle(
-                    self.displaySurf, TARGETCOLOR, (x, y), radius, MARGIN)
-                # рисуем текст
-                textSurf = self.font.render('Левая кнопка мыши - заблокировать/освободить ячейку',
-                                            True, FREECELLCOLOR)
-                textRect = textSurf.get_rect()
-                textRect.topleft = (XMARGIN, MARGIN)
-                self.displaySurf.blit(textSurf, textRect)
-
-                textSurf = self.font.render('Enter - найти путь до цели',
-                                            True, FREECELLCOLOR)
-                textRect = textSurf.get_rect()
-                textRect.topleft = (XMARGIN, MARGIN * 2 + BASEFONTSIZE)
-                self.displaySurf.blit(textSurf, textRect)
-                if self.state == SETSTATE:
-                    # обрабатываем события
-                    for event in pygame.event.get():
-                        if event.type == QUIT:
-                            self.running = False
-
-                        elif event.type == MOUSEBUTTONUP:
-                            self.dragging = False
-                            self.lastCell = (None, None)
-
-                        elif event.type == MOUSEBUTTONDOWN:
-                            self.dragging = True
-
-                        elif event.type == KEYUP:
-                            if event.key == K_ESCAPE:
-                                self.running = False
-                            elif event.key == K_RETURN:
-                                # тут короче находим путь и переходим в режим
-                                # прогулки
-                                task = Task('', self.workArray, START, FINISH)
-                                self.path = task.solveByWaveAlgorithm()
-                                if self.path == None:
-                                    alertSurf = self.alertFont.render(
-                                        'НЕТ ПУТИ!', True, TARGETCOLOR)
-                                    alertRect = alertSurf.get_rect()
-                                    alertRect.topleft = (int((WINDOWWIDTH - alertRect.width) / 2),
-                                                         int((WINDOWHEIGHT - alertRect.height) / 2))
-                                    self.displaySurf.blit(alertSurf, alertRect)
-                                    iSleep = True
-                                else:
-                                    self.path.extend([FINISH] * 5)
-                                    self.state = WALKSTATE
-
-                    # делаем стенку
-                    pos = pygame.mouse.get_pos()
-                    if self.dragging:
-                        curCell = self.defCell(pos)
-                        change = self.lastCell != curCell
-                        self.lastCell = curCell
-                        if change:
-                            i, j = curCell
-                            if i != None:
-                                self.workArray[i][j] = not self.workArray[i][j]
-
-                if self.state == WALKSTATE:
-                    # двигаемся по маршруту
-                    delay = 100
-                    pygame.time.delay(delay)
-                    cur = self.path.pop(0)
-                    HERO = (cur[0], cur[1])
-                    if self.path == []:
-                        self.state = SETSTATE
-                        HERO = START
-                # в самом конце обновляем экран
-                # self.fpsClock.tick(30)
-                pygame.display.update()
-                if iSleep:
-                    sleep(2)
-                    iSleep = False
+            self.mainloop()
         finally:
             pygame.quit()
             # sys.exit()
+
+    def mainloop(self):
+        global HERO
+        while self.running:
+            iSleep = False
+            # делаем начальные вещи
+            self.displaySurf.fill(BGCOLOR)
+            # рисуем доску
+            for i in range(HEIGHT):
+                for j in range(WIDTH):
+                    x = XMARGIN + j * FULLSELLSIZE
+                    y = YMARGIN + i * FULLSELLSIZE
+                    if self.workArray[i][j]:
+                        color = FREECELLCOLOR
+                    else:
+                        color = LOCKCELLCOLOR
+                    pygame.draw.rect(self.displaySurf, color,
+                                     (x, y, SIZE_OF_CELL, SIZE_OF_CELL))
+            # self.drawCoords() раскоментировать, если нужно увидеть координаты клеток
+            # self.drawMarks() раскомментировать, если нужно увидеть цифровые метки
+            # нанесенные во время работы волнового алгоритма
+            # рисуем колобка
+            radius = int((SIZE_OF_CELL - MARGIN) / 2)
+            x = int(XMARGIN + HERO[0] * FULLSELLSIZE) + \
+                radius + int(MARGIN / 2)
+            y = int(YMARGIN + HERO[1] * FULLSELLSIZE) + \
+                radius + int(MARGIN / 2)
+            pygame.draw.circle(self.displaySurf, BALLCOLOR, (x, y), radius)
+
+            # рисуем цель
+            radius = int((SIZE_OF_CELL) / 2)
+            x = int(XMARGIN + FINISH[0] * FULLSELLSIZE) + radius
+            y = int(YMARGIN + FINISH[1] * FULLSELLSIZE) + radius
+            pygame.draw.circle(
+                self.displaySurf, TARGETCOLOR, (x, y), radius, MARGIN)
+            # рисуем текст
+            self.drawNotes()
+            if self.state == SETSTATE:
+                # обрабатываем события
+                for event in pygame.event.get():
+                    if event.type == QUIT:
+                        self.running = False
+
+                    elif event.type == MOUSEBUTTONUP:
+                        self.dragging = False
+                        self.lastCell = (None, None)
+
+                    elif event.type == MOUSEBUTTONDOWN:
+                        self.dragging = True
+
+                    elif event.type == KEYUP:
+                        if event.key == K_ESCAPE:
+                            self.running = False
+                        elif event.key == K_RETURN:
+                            # находим путь и переходим в режим прогулки
+                            task = Task('', self.workArray, START, FINISH)
+                            self.path = task.solveByWaveAlgorithm()
+                            if self.path == None:
+                                alertSurf = self.alertFont.render(
+                                    'НЕТ ПУТИ!', True, TARGETCOLOR)
+                                alertRect = alertSurf.get_rect()
+                                alertRect.topleft = (int((WINDOWWIDTH - alertRect.width) / 2),
+                                                     int((WINDOWHEIGHT - alertRect.height) / 2))
+                                self.displaySurf.blit(alertSurf, alertRect)
+                                iSleep = True
+                            else:
+                                self.path.extend([FINISH] * 5)
+                                self.state = WALKSTATE
+
+                # делаем стенку
+                pos = pygame.mouse.get_pos()
+                if self.dragging:
+                    curCell = self.defCell(pos)
+                    change = self.lastCell != curCell
+                    self.lastCell = curCell
+                    if change:
+                        i, j = curCell
+                        if i != None:
+                            self.workArray[i][j] = not self.workArray[i][j]
+
+            if self.state == WALKSTATE:
+                # двигаемся по маршруту
+                delay = 100
+                pygame.time.delay(delay)
+                cur = self.path.pop(0)
+                HERO = (cur[0], cur[1])
+                if self.path == []:
+                    self.state = SETSTATE
+                    HERO = START
+            # в самом конце обновляем экран
+            # self.fpsClock.tick(30)
+            pygame.display.update()
+            if iSleep:
+                sleep(2)
+                iSleep = False
 
     def drawMarks(self):
         """Рисует числовые метки на квадратах, если использовался волновой метод"""
@@ -428,11 +388,10 @@ class Gui(object):
                     x = XMARGIN + i * FULLSELLSIZE + SIZE_OF_CELL / 2
                     y = YMARGIN + j * FULLSELLSIZE + SIZE_OF_CELL / 2
                     textSurf = self.minifont.render(str(markNum),
-                                                True, (255, 0, 0))
+                                                    True, (255, 0, 0))
                     textRect = textSurf.get_rect()
                     textRect.topleft = (x, y)
                     self.displaySurf.blit(textSurf, textRect)
-
 
     def defCell(self, pos):
         """функция принимает позицию курсора, возвращает координаты ячейки"""
@@ -449,6 +408,32 @@ class Gui(object):
             return NOCELL
 
         return (int(y // FULLSELLSIZE), int(x // FULLSELLSIZE))
+
+    def drawCoords(self):
+        """рисует координаты клеток"""
+        for i in range(HEIGHT):
+            for j in range(WIDTH):
+                x = XMARGIN + j * FULLSELLSIZE
+                y = YMARGIN + i * FULLSELLSIZE
+                textSurf = self.minifont.render('(%s, %s)' % (j, i),
+                                                True, (0, 0, 0))
+                textRect = textSurf.get_rect()
+                textRect.topleft = (x, y)
+                self.displaySurf.blit(textSurf, textRect)
+
+    def drawNotes(self):
+        """рисует инструкции на поле"""
+        textSurf = self.font.render('Левая кнопка мыши - заблокировать/освободить ячейку',
+                                    True, FREECELLCOLOR)
+        textRect = textSurf.get_rect()
+        textRect.topleft = (XMARGIN, MARGIN)
+        self.displaySurf.blit(textSurf, textRect)
+
+        textSurf = self.font.render('Enter - найти путь до цели',
+                                    True, FREECELLCOLOR)
+        textRect = textSurf.get_rect()
+        textRect.topleft = (XMARGIN, MARGIN * 2 + BASEFONTSIZE)
+        self.displaySurf.blit(textSurf, textRect)
 
 if __name__ == '__main__':
     Gui()
