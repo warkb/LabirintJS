@@ -3,6 +3,7 @@ body {
 	width: 100vw;
 	height: 100vh;
 	overflow: hidden;
+	display: flex;
 }
 
 .activeCell {
@@ -10,7 +11,7 @@ body {
 	height: 50px;
 	background-color: #54f4f4;
 	border: 1px solid red;
-	position: fixed;
+	position: absolute;
 	text-align: center;
 	line-height: 50px;
 	}
@@ -20,7 +21,7 @@ body {
 	height: 50px;
 	background-color: rgb(59, 80, 119);
 	border: 1px solid red;
-	position: fixed;
+	position: absolute;
 	text-align: center;
 	line-height: 50px;
 }
@@ -29,6 +30,7 @@ body {
 	text-align: center;
 	font-family: sans-serif;
 	font-size: 14pt;
+	margin: 0 auto;
 }
 
 .buttonClass {
@@ -51,24 +53,9 @@ body {
 	border: 2px solid #FF7404;
 }
 
-#waitscreen {
-	background-color: rgba(202, 200, 200, 0.8);
-	width: 100vw;
-	height: 100vh;
-	overflow: hidden;
-	position: absolute;
-	top: 0;
-	left: 0;
-	z-index: 2000;
-	display: flex;
-	align-items: center;
-	justify-content: center;
-	columns: 15em 1;
+.mainCellsDiv {
+	border: 10px solid #00000000;
+	position: relative;
+	margin: 0 auto;
 }
 
-#waitContainer {
-	top: 60vh;
-	/* border: 1px solid red; */
-	height: 20em; 
-	text-align: center;
-}

@@ -17,9 +17,17 @@ var baseCellColor = "#54f4f4";
 var highlitedCellColor = "rgb(255,219,77)";
 var activeCellClassName = "activeCell";
 var notActiveCellClassName = "notActiveCell";
+var mainCellsDivClass = 'mainCellsDiv';
 
-var statusArray = new Array(numberOfCells);
+var statusArray = new Array(numberOfCells); 
 var cellsArray = new Array(numberOfCells);
+var numMarksArray = new Array(numberOfCells); // массив числовых меток для всех ячеек
+
+for (var i = 0; i < numberOfCells; i++) {
+	statusArray[i] = new Array(numberOfCells);
+	cellsArray[i] = new Array(numberOfCells);
+	numMarksArray[i] = new Array(numberOfCells);
+}
 
 var finding = false; // флаг который означает, что идет поиск
 var stopFlag = false; // флаг который означает, что кнопка стоп была нажата
@@ -29,10 +37,6 @@ function sleep(ms) {
 	while (new Date() < ms){}
 }
 
-function onStop() {
-	// функция, запускаемая по кнопке "Надоело ждать"
-	stopFlag = true;
-}
 
 function onEnter(e) {
 	// действие по нажатию enter
@@ -44,7 +48,6 @@ function onEnter(e) {
 			refrashStatusArray();
 			findedPath = toFindPath();
 			console.log(findedPath);
-			waitscreenObject.style.top = (-document.body.clientWidth) + "px";
 		}
 		try {
 			setTimeout(doTheLongWork, 0);
@@ -63,29 +66,27 @@ function onEnter(e) {
 goButton = document.getElementById("goButton");
 goButton.onclick = onEnter;
 
-// goButton.style.top = firstTop + (numberOfCells - 1) * sizeWithMargin + "px";
-// goButton.style.left = firstLeft + (numberOfCells) * sizeWithMargin + 'px';
-
 document.getElementById('info').appendChild(goButton);
-firstTop += 40;//document.getElementById('info').style.height;
+firstTop += 40;
 
 var finalPoint = [0, numberOfCells - 1];
 
 
-for (var i = 0; i < numberOfCells; i++) {
-	statusArray[i] = new Array(numberOfCells);
-	cellsArray[i] = new Array(numberOfCells);
-}
+// добавляем ячейки на экран
+var mainCellsDiv = document.createElement("div");
+mainCellsDiv.className = mainCellsDivClass;
+mainCellsDiv.style.width = sizeWithMargin * numberOfCells + "px";
+document.getElementById('info').appendChild(mainCellsDiv);
 
 for (var i = 0; i < numberOfCells; i++) {
 	for (var j = 0; j < numberOfCells; j++) {
 		var cell = document.createElement("div");
 		cell.className = activeCellClassName;
-		cell.style.top = (firstTop + i * sizeWithMargin) + "px";
-		cell.style.left = (firstLeft + j * sizeWithMargin) + "px";
+		cell.style.top = (i * sizeWithMargin) + "px";
+		cell.style.left = (j * sizeWithMargin) + "px";
 		cellsArray[i][j] = cell;
 		cell.appendChild(document.createTextNode(i + ', ' + j));
-		document.body.appendChild(cell);
+		mainCellsDiv.appendChild(cell);
 	}
 }
 
@@ -152,66 +153,53 @@ function posibleMoves(point) {
 }
 
 function toFindPath() {
-	resultPath = [];
 	// ищет путь до конечной точки в лабиринте
 	// возвращает пустой массив в случае, если пути нет
 	counter = 0;
-	var startPoint = [numberOfCells - 1, 0]
-	var pathArray = [{
-			point: startPoint,
-			posibleMoves: posibleMoves(startPoint)
-		}];
-	resultPath.push(startPoint);
-	return recursiveFindPath(pathArray);
+	var startPoint = [numberOfCells - 1, 0];
+	var finishPoint = [0, numberOfCells - 1];
+	return toFindPathByWaveMethood(statusArray, startPoint, finishPoint);
 }
 
-function recursiveFindPath(pathArray) {
-	counter += 1;
-	// функция рекурсивно ищет путь до нужной точки
-	if (pathArray.length == 0 || stopFlag == true) {
-		// ходов больше нет
-		stopFlag = false;
-		alert('Пути нет!');
-		return -1;
-	}
-	if (counter > maxCounter) {
-		alert('Слишком долго ищется путь');
-		return -1;
-	}
 
-	if (resultPath.length > 100) {return -1;}
-	try {
-		var lastCell = pathArray.slice(-1)[0];
-	}
-	catch(e) {
-		alert('Превышен максимальный размер стека');
-		return -1;
-	}
-	var lastPosibleMoves = lastCell.posibleMoves;
-	if (lastPosibleMoves.length == 0) {
-		// зашли в тупик
-		// делаем шаг назад
-		pathArray.pop();
-		resultPath.pop();
-		// $.extend(true, [], pathArray);
-		
-		return recursiveFindPath(pathArray);
-	}
-	if (distance(lastCell.point, finalPoint) == 0) {
-		// путь найден! возвращаем путь
-		console.log('ура!');
-		return resultPath;
-	}
+function toFindPathByWaveMethood(fieldArray, startPoint, finishPoint) {
+	/* Ищет путь из точки startPoint в точку finishPoint 
+	 * fieldArray представляет собой двумерный список, заполненный переменными
+	 * булева типа, обозначающая, можно ли проходить через данный квадрат или нет
+	 * :return path: список координат узловых точек пути
+	 */
+	var markedCellsArray = [];
+	markedCellsArray.push(startPoint);
+	for (var k = 0; k < numberOfCells * numberOfCells; k++) {
+		newMarkedCells = [];
+		lastMarkedCells = markedCellsArray.slice(-1)[0];
 
-	var newPoint = pathArray[pathArray.length - 1].posibleMoves.shift();
-	pathArray[pathArray.length - 1].posibleMoves;
-	var newCell = {
-		point: newPoint,
-		posibleMoves: posibleMoves(newPoint)
-	};
-	pathArray.push(newCell);
-	resultPath.push(newPoint);
-	return recursiveFindPath(pathArray);
+		// для каждой ячейки из предыдущего списка
+		for (var i = 0; i < lastMarkedCells.length; i++) {
+			(lastMarkedCells[i])
+		}
+	}
+}
+
+function getNeighbors(point) {
+	var x, y, newX, newY;
+	x = point[0];
+	y = point[1];
+	var neighbors = [];
+	for (var i = -1; i < 2; i++) {
+		newX = x + i;
+		if (newX < 0 || newX > numberOfCells - 1) 
+			continue;
+		for (var j = -1; j < 2; j++) {
+			newY = y + j;
+			if (newY < 0 || newY > numberOfCells - 1) 
+				continue;
+			if (Math.abs(i) == Math.abs(j)) 
+				continue;
+			neighbors.push([newX, newY]);
+		}
+	}
+	return neighbors;
 }
 
 function movesSortsFunction(a, b) {
