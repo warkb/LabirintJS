@@ -4,6 +4,14 @@ import random
 from pygame.locals import *
 from math import sqrt
 from time import sleep
+from copy import deepcopy
+
+"""
+ТУУУУУУУУУУУДУУУУУУУУУУУУУУУУ
+*Зарефакторить код, разделить большие функции на маленькие
+
+"""
+
 
 pathToFile_TO_FIELD = 'field.txt'
 START_MARK = 's'
@@ -21,6 +29,8 @@ NOCELL = (None, None)
 
 WINDOWWIDTH = 900
 WINDOWHEIGHT = 600
+
+NUMARRAY = []
 
 START = (0, HEIGHT - 1)
 HERO = START
@@ -94,53 +104,128 @@ class Task():
         return False
 
     def solveByWaveAlgorithm(self):
+        global NUMARRAY
         """поиск пути с помощью волнового алгоритма"""
         """
-		создаем числовой массив размером с поле, где свободные ячейки 
-		будут обозначаться через -1, а заблокированные для прохождения через None
-		создаем пустой массив который будет содержать информацию о ранее 
-		пронумерованных ячейках
-		В ячейку, соответствующую стартовой ставим 0
-		Добавляем её в список ранее пронумерованных
-		Далее в цикле:
-			Создаем список ячеек, соседних по отношению к каждой последней пронумерованной,
-			не являющихся пронумерованными или заблокированными
-			Если список пуст, значит пути нет - возвраем None
-			Если список содержит финишную ячейку - значит путь найден. Прерываем цикл
-			Добавляем этот список в массив ранее пронумерованных ячеек.
-		С помощью массива ранее пронумерованных ячеек восстанавливаем путь и 
-		возвращаем его		
-		"""
+        создаем числовой массив размером с поле, где свободные ячейки 
+        будут обозначаться через -1, а заблокированные для прохождения через None
+        создаем пустой массив который будет содержать информацию о ранее 
+        пронумерованных ячейках
+        В ячейку, соответствующую стартовой ставим 0
+        Добавляем её в список ранее пронумерованных
+        Далее в цикле:
+            Создаем список ячеек, соседних по отношению к каждой последней пронумерованной,
+            не являющихся пронумерованными или заблокированными
+            Если список пуст, значит пути нет - возвраем None
+            Если список содержит финишную ячейку - значит путь найден. Прерываем цикл
+            Добавляем этот список в массив ранее пронумерованных ячеек.
+        С помощью массива ранее пронумерованных ячеек восстанавливаем путь и 
+        возвращаем его        
+        """
         numArray = [[-1 if self.fieldArr[i][j][2] else None
                      for j in range(self.width)]
                     for i in range(self.height)]
-        lastMarkedLists = []  # список с ранее
+        lastMarkedLists = [[self.start]]  # список с ранее пронумерованными ячейками
+        i, j = self.start
+        numArray[i][j] = 0
+        def getNeighbors(cell, noMarkCheck=False):
+            """возвращает все еще не отмеченные и свободные соседние клетки"""
+            output = []
+            for di in [-1, 0, 1]:
+                ni, nj = cell
+                if not(0 <= ni + di < self.height):
+                    continue
+                for dj in [-1, 0, 1]:
+                    if not(0 <= nj + dj < self.width):
+                        continue
+                    if abs(di) == abs(dj):
+                        continue
+                    # print('^^^^^^^^^^^^^^')
+                    # print('di', di)
+                    # print('dj', dj)
+                    # print('^^^^^^^^^^^^^^')
+                    # print('if j')
+                    # print('nj + dj', nj + dj)
+                    # print(self.width)
+                    # print()
+                    # print('itog')
+                    # print('ni', ni)
+                    # print('nj', nj)
+                    if numArray[ni + di][nj + dj] == -1 or noMarkCheck:
+                        output.append((ni + di, nj + dj))
+            return output
+
+        # print('====================================')
+        # print((0, 11), getNeighbors((0, 11), True))
+        # print((11, 0), getNeighbors((11, 0), True))
+        # print((11, 11), getNeighbors((11, 11), True))
+        # print((0, 0), getNeighbors((0, 0), True))        
+        # print('====================================')
+        for k in range(max(self.width, self.height) * 
+            max(self.width, self.height)):
+            listToMark = []
+            for cell in lastMarkedLists[-1]:
+                for neighCell in getNeighbors(cell):
+                    if not neighCell in listToMark:
+                        listToMark.append(neighCell)
+            if listToMark == []:
+                # доступных ячеек для разметки больше нет
+                # путь не найден
+                NUMARRAY = lastMarkedLists
+                return None
+            for cell in listToMark:
+                numArray[cell[0]][cell[1]] = k + 1
+            if self.finish in listToMark:
+                print('путь нашли')
+
+                # путь нашли!
+                break
+            lastMarkedLists.append(listToMark)
+
+        else:
+            print('Цикл идет дольше, чем должен')
+            return
+        
+        # собираем путь
+        path = [self.finish]
+        for line in reversed(lastMarkedLists):
+            # print()
+            # print('pathPrev', path[0])
+            # print('line', line)
+            # print('neighCell', getNeighbors(path[0], True))
+            for cell in line:
+                if cell in getNeighbors(path[0], True):
+                    path.insert(0, cell)
+                    break
+        NUMARRAY = lastMarkedLists
+        return path
+
 
     def solveByAAsteric(self):
         """поиск пути с помощью алгоритми А*"""
         self.path = []
         self.childs = []
         """
-		Пихаем в массив потомки старта
-		Пихаем в путь старт.
+        Пихаем в массив потомки старта
+        Пихаем в путь старт.
 
-		Основной цикл:
-			Смотрим последний элемент массивов потомков
-			Если он пуст, вынимаем этот пустой массив.
-			Вынимаем последний элемент из пути.
-				Проверяем, пуст ли массив потомков?
-					Если да, то бахаем исключение(нет решения)
-				Сбрасываем цикл на начало.
-			Вынимаем первого потомка из последнего элементе массивов потомков.
-			Пихаем его в путь.
+        Основной цикл:
+            Смотрим последний элемент массивов потомков
+            Если он пуст, вынимаем этот пустой массив.
+            Вынимаем последний элемент из пути.
+                Проверяем, пуст ли массив потомков?
+                    Если да, то возвращаем None(нет решения)
+                Сбрасываем цикл на начало.
+            Вынимаем первого потомка из последнего элементе массивов потомков.
+            Пихаем его в путь.
 
-			Проверяем, последний пункт пути совпадает с финишем?
-				Если да-валим из функции.(Ура нашли)
-			
-			Если нет, смотрим есть ли у него потомки?
-				Если есть, пихаем в массивы потомков его потомков.
-				Если нет, пихаем пустой массив
-		"""
+            Проверяем, последний пункт пути совпадает с финишем?
+                Если да-валим из функции.(Ура нашли)
+            
+            Если нет, смотрим есть ли у него потомки?
+                Если есть, пихаем в массивы потомков его потомков.
+                Если нет, пихаем пустой массив
+        """
 
         left = 3
         self.childs.append(self.makeChilds(self.start, left))
@@ -209,13 +294,14 @@ class Gui(object):
         pygame.display.set_caption('Поиск пути в лабиринте')
         self.font = pygame.font.Font('freesansbold.ttf', BASEFONTSIZE)
         self.alertFont = pygame.font.Font('freesansbold.ttf', ALERTFONTSIZE)
+        self.minifont = pygame.font.Font('freesansbold.ttf', 12)
         self.running = True
         # состояния
         self.state = SETSTATE
         self.lastCell = (None, None)
         self.dragging = False
 
-        self.workArray = [[False] * WIDTH for _ in range(HEIGHT)]
+        self.workArray = [[True] * WIDTH for _ in range(HEIGHT)]
         self.workArray[START[0]][START[1]] = True
         self.workArray[FINISH[0]][FINISH[1]] = True
         # игровой цикл
@@ -229,12 +315,21 @@ class Gui(object):
                     for j in range(WIDTH):
                         x = XMARGIN + j * FULLSELLSIZE
                         y = YMARGIN + i * FULLSELLSIZE
+
+                        # дебажные рисунки
+                        textSurf = self.minifont.render('(%s, %s)' % (j, i),
+                                                    True, (0, 0, 0))
+                        textRect = textSurf.get_rect()
+                        textRect.topleft = (x, y)
+                        #------------------------------------
                         if self.workArray[i][j]:
                             color = FREECELLCOLOR
                         else:
                             color = LOCKCELLCOLOR
                         pygame.draw.rect(self.displaySurf, color,
                                          (x, y, SIZE_OF_CELL, SIZE_OF_CELL))
+                        self.displaySurf.blit(textSurf, textRect)
+                self.drawMarks()
                 # рисуем колобка
                 radius = int((SIZE_OF_CELL - MARGIN) / 2)
                 x = int(XMARGIN + HERO[0] * FULLSELLSIZE) + \
@@ -323,6 +418,21 @@ class Gui(object):
         finally:
             pygame.quit()
             # sys.exit()
+
+    def drawMarks(self):
+        """Рисует числовые метки на квадратах, если использовался волновой метод"""
+        for markNum in range(len(NUMARRAY)):
+            for cell in NUMARRAY[markNum]:
+                if cell:
+                    i, j = cell
+                    x = XMARGIN + i * FULLSELLSIZE + SIZE_OF_CELL / 2
+                    y = YMARGIN + j * FULLSELLSIZE + SIZE_OF_CELL / 2
+                    textSurf = self.minifont.render(str(markNum),
+                                                True, (255, 0, 0))
+                    textRect = textSurf.get_rect()
+                    textRect.topleft = (x, y)
+                    self.displaySurf.blit(textSurf, textRect)
+
 
     def defCell(self, pos):
         """функция принимает позицию курсора, возвращает координаты ячейки"""
