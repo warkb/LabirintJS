@@ -1,21 +1,20 @@
-<input type="button" value="input"/>
-<button type="button">button</button>
-
-<style type="text/css">
-button {
-  font-weight: 700;
-  color: white;
-  text-decoration: none;
-  padding: .8em 1em calc(.8em + 3px);
-  border-radius: 3px;
-  background: rgb(64,199,129);
-  transition: 0.2s;
-  border-style: none;
-  outline: 0 !important;
-} 
-a.button:hover { background: rgb(53, 167, 110); }
-a.button:active {
-  background: rgb(33,147,90);
-  box-shadow: 0 3px rgb(33,147,90) inset;
-}
-</style>
+<!DOCTYPE html>
+<html>
+<head>
+  <title>tmp</title>
+</head>
+<body>
+<script type="text/javascript">
+  var a = [[2, 2], [3, 4]];
+  var b = [1, 2];
+  function containElement(array, element) {
+    for (var indEl in array) {
+      if (array[indEl].join(',') == element.join(',')) 
+        return true;
+    }
+    return false;
+  }
+  console.log(containElement(a, b));
+</script>
+</body>
+</html>
