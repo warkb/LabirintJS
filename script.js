@@ -1,8 +1,8 @@
 // take from css
 var findedPath;
-var margin = 5; // величина зазора между клетками
-var numberOfCells = 9; // количетво клеток в линии
-var cellPxSize = 50; // размер клетки в пикселах
+var margin = 4; // величина зазора между клетками
+var numberOfCells = 12; // количетво клеток в линии
+var cellPxSize = 30; // размер клетки в пикселах
 var sizeWithMargin = cellPxSize + margin;
 var maxCounter = 15000; // максимальное количество итераций поиска
 var firstLeft = (document.body.clientWidth - sizeWithMargin * numberOfCells + 
@@ -86,11 +86,18 @@ for (var i = 0; i < numberOfCells; i++) {
         cell.className = activeCellClassName;
         cell.style.top = (i * sizeWithMargin) + "px";
         cell.style.left = (j * sizeWithMargin) + "px";
+        cell.style.width = cellPxSize + "px";
+        cell.style.height = cellPxSize + "px";
+        cell.style.lineHeight = cellPxSize + "px";
+        cell.style.cursor = "pointer";
         cellsArray[i][j] = cell;
-        cell.appendChild(document.createTextNode(i + ', ' + j));
+        /*cell.appendChild(document.createTextNode(i + ', ' + j));*/
         mainCellsDiv.appendChild(cell);
     }
 }
+
+cellsArray[numberOfCells - 1][0].appendChild(document.createTextNode('S'));
+cellsArray[0][numberOfCells - 1].appendChild(document.createTextNode('F'));
 
 // добавляем смену класса при перетаскивании мышью с зажатой левой кнопкой
 var pressed = false;

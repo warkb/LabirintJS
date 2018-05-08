@@ -7,23 +7,17 @@ body {
 }
 
 .activeCell {
-	width: 50px;
-	height: 50px;
 	background-color: #54f4f4;
-	border: 1px solid red;
+	/* border: 1px solid red; */
 	position: absolute;
 	text-align: center;
-	line-height: 50px;
 	}
 
 .notActiveCell {
-	width: 50px;
-	height: 50px;
 	background-color: rgb(59, 80, 119);
-	border: 1px solid red;
+	/* border: 1px solid red; */
 	position: absolute;
 	text-align: center;
-	line-height: 50px;
 }
 
 #info {
