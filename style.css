@@ -5,19 +5,24 @@ body {
 	overflow: hidden;
 	display: flex;
 }
-
-.activeCell {
-	background-color: #54f4f4;
-	/* border: 1px solid red; */
+.activeCell, .notActiveCell, #divWithColobok {
 	position: absolute;
 	text-align: center;
+	background-size: contain;
+}
+
+.activeCell {
+
+	background-image: url(img/grass.png);
+	background-size: contain;
 	}
 
 .notActiveCell {
-	background-color: rgb(59, 80, 119);
-	/* border: 1px solid red; */
-	position: absolute;
-	text-align: center;
+	background-image: url(img/brick.png);
+}
+
+#divWithColobok {
+	background-image: url(img/colobok.png);
 }
 
 #info {

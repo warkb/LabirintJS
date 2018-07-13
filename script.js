@@ -1,8 +1,8 @@
 // take from css
 var findedPath;
-var margin = 4; // величина зазора между клетками
+var margin = 0; // величина зазора между клетками
 var numberOfCells = 12; // количетво клеток в линии
-var cellPxSize = 30; // размер клетки в пикселах
+var cellPxSize = 42; // размер клетки в пикселах
 var sizeWithMargin = cellPxSize + margin;
 var maxCounter = 15000; // максимальное количество итераций поиска
 var firstLeft = (document.body.clientWidth - sizeWithMargin * numberOfCells + 
@@ -22,6 +22,9 @@ var mainCellsDivClass = 'mainCellsDiv';
 var statusArray = new Array(numberOfCells); 
 var cellsArray = new Array(numberOfCells);
 var numMarksArray = new Array(numberOfCells); // массив числовых меток для всех ячеек
+
+// флаг, сигнализирующий о том, что анимация идет
+var playingAnimation = false;
 
 for (var i = 0; i < numberOfCells; i++) {
     statusArray[i] = new Array(numberOfCells);
@@ -91,13 +94,30 @@ for (var i = 0; i < numberOfCells; i++) {
         cell.style.lineHeight = cellPxSize + "px";
         cell.style.cursor = "pointer";
         cellsArray[i][j] = cell;
-        /*cell.appendChild(document.createTextNode(i + ', ' + j));*/
         mainCellsDiv.appendChild(cell);
     }
 }
 
-cellsArray[numberOfCells - 1][0].appendChild(document.createTextNode('S'));
-cellsArray[0][numberOfCells - 1].appendChild(document.createTextNode('F'));
+
+finalPointId = 'finalPoint';
+startPointId = 'startPoint';
+finalPointImg = 'img/hous.png';
+// cellsArray[numberOfCells - 1][0].appendChild(document.createTextNode('S'));
+cellsArray[numberOfCells - 1][0].id = startPointId;
+// cellsArray[0][numberOfCells - 1].appendChild(document.createTextNode('F'));
+cellsArray[0][numberOfCells - 1].id = finalPointId;
+cellsArray[0][numberOfCells - 1].style.backgroundImage  = 'url(' + finalPointImg + ')';
+
+// добавляем div с колобком
+var colobok = document.createElement("div");
+colobokId = 'divWithColobok';
+colobok.id = colobokId;
+colobok.style.top = ((numberOfCells - 1) * sizeWithMargin) + "px";
+colobok.style.left = 0 + "px";
+colobok.style.width = cellPxSize + "px";
+colobok.style.height = cellPxSize + "px";
+colobok.style.lineHeight = cellPxSize + "px";
+mainCellsDiv.appendChild(colobok);
 
 // добавляем смену класса при перетаскивании мышью с зажатой левой кнопкой
 var pressed = false;
@@ -122,6 +142,9 @@ function refrashStatusArray() {
 
 function changeClass(event) {
     // функция меняет статус ечейки с активной на неактивную
+    if (playingAnimation) return;
+    if (event.target.id == startPointId || event.target.id == finalPointId) 
+        return;
     if (event.target.className == notActiveCellClassName) {
         event.target.className = activeCellClassName;
     }
@@ -291,24 +314,25 @@ function distance(a, b) {
 
 function playAnimation(path) {
     // отображает полученный путь в виде анимации
+    playingAnimation = true;
     var start = Date.now();
     var frameTime = 300; // время, за которое анимация сдвинется на один кадр
     var fullTime = frameTime * (path.length + 1);
-    var prevHighlatedCell = undefined;
     var timer = setInterval(function () {
         var timePassed = Date.now() - start;
         var currentFrame = Math.ceil(timePassed / frameTime);
-        if (prevHighlatedCell) {
-            prevHighlatedCell.style.backgroundColor = "";
-        }
+
         if (currentFrame >= path.length) {
             clearInterval(timer);
+            playingAnimation = false;
+            colobok.style.top = ((numberOfCells - 1) * sizeWithMargin) + "px";
+            colobok.style.left = 0 + "px";
             return;
         }
         var currentCellCoord = path[currentFrame];
         var currentCell = cellsArray[currentCellCoord[0]][currentCellCoord[1]];
-        currentCell.style.backgroundColor = highlitedCellColor;
-        prevHighlatedCell = currentCell;
+        colobok.style.top = currentCell.style.top;
+        colobok.style.left = currentCell.style.left;
     });
 }
 
